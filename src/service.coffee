@@ -103,17 +103,21 @@ module.exports = (CGOL_HOME, settings)->
     repo.getPatternsAndMatchesForTournament(req.params.tournamentName).then (data)->
       res.status(200).json data
 
-      
+  
+  
+  # FIXME: This won't do. Routing logic needs to be done client-side. 
   service.get '/kiosk/leaderboard', (req, res) ->
     res.sendFile path.resolve __dirname, '..', 'static', 'leaderboard.html'
 
 
-  service.get '/editor', (req, res)->
-    res.sendFile path.resolve __dirname, '..', 'static', 'index.html'
+  service.get '/landingpage.html', (req, res)->
+    res.sendFile path.resolve __dirname, '..', 'static', 'landingpage.html'
 
-  # for everything else, just return landingpage.html
+  # for everything else, just return index.html
   # so client-side routing works smoothly
+  #
+  #
   service.get '*',  (request, response)->
-    response.sendFile path.resolve __dirname, '..', 'static', 'landingpage.html'
+    response.sendFile path.resolve __dirname, '..', 'static', 'index.html'
 
   service
