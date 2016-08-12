@@ -1,0 +1,32 @@
+#logo{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+.tarent_logo{
+  padding: 5%;
+}
+
+.background_container {
+  width:100%;
+  height: 100%;
+}
+
+.text_container{
+  text-align: center;
+  margin-left: 33%;
+  margin-right: 33%;
+}
+
+.link_container{
+  text-align: center;
+  margin: 5px;
+  padding: 3px;
+}
+
+.footer_paragraph{
+  font-size: 9px;
+  float: right;
+}
