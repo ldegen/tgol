@@ -4,6 +4,7 @@ Pattern = require "../pattern"
 {h1,div,factory,input, button, span, img} = require "../react-utils"
 kbpgp = require "kbpgp"
 Promise = require "bluebird"
+request = Promise.promisify require "request"
 
 generate_rsa = Promise.promisify (options, callback)->
   kbpgp.KeyManager.generate_rsa options, callback
@@ -27,28 +28,49 @@ module.exports = class PatternDetail extends React.Component
   constructor: (props)->
     super props
 
-    @state = {}
-  #updatePattern: ->
+    @state =
+      name:""
+      author:""
+      mail:""
+      pin:""
+      elo:""
+      status: "pending"
 
-  #  Promise
-  #    .all([
-  #      johnP.then (john)-> export_pgp_public john, {}
-  #      johnP.then (john)-> export_pgp_private john, {}
-  #      Pattern.decode @props.params.spec
-  #    ])
-  #    .then ([pub,priv,pattern])=>
-  #      console.log "pub", pub
-  #      console.log "priv", priv
-  #      @setState
-  #        pattern:pattern
-  #        pubkey:pub
+  componentWillReceiveProps: (newProps)->
+    @fetchPatternInfo(newProps.params.spec) if newProps.params.spec != @props.params.spec
+  componentDidMount: -> @fetchPatternInfo(@props.params.spec)
+  fetchPatternInfo: (spec)->
+    request "#{location.origin}/api/froscon2016/patterns/#{encodeURIComponent spec}"
+      .then (resp)=>
+        switch resp.statusCode
+          when 404
+            @setState status:"unknown"
+          when 200
+            body = JSON.parse resp.body
+            body.status = "known"
+            @setState body
+          else
+            @setState status:"error"
+  uploadPattern: ()=>
+    @setState status:"pending"
+    request 
+      url: "#{location.origin}/api/froscon2016/patterns"
+      method: "POST"
+      json:pdoc:
+        name: @state.name
+        author: @state.author
+        mail: @state.mail
+        elo:1000
+        base64String:@props.params.spec
+        pin: @state.pin
+     .then (()=>@fetchPatternInfo @props.params.spec), (err)->@setState status:"error"
 
-  #componentWillReceiveProps: (newProps)-> 
-  #  @updatePattern() if newProps.params.spec != @props.params.spec
-  #componentDidMount: -> @updatePattern()
+  handleUserInput: (name)->(ev)=>
+    @setState "#{name}": ev.target.value
+
   render: ->
     pattern = new Pattern @props.params.spec
-  
+
     labelValue = (label, value)->
       div
         className: "label-value"
@@ -58,6 +80,13 @@ module.exports = class PatternDetail extends React.Component
         span
           className: "value"
           value
+    textInput = (name, label)=>
+      input
+        type:"text"
+        placeholder:label
+        name:name
+        value: @state[name]
+        onChange: @handleUserInput(name)
     div(
       h1 "Pattern Details"
       Visualization
@@ -66,14 +95,17 @@ module.exports = class PatternDetail extends React.Component
       img
         className: "qr-code"
         src:"data:image/png;base64," + qr.imageSync( window.location.toString(), type:"png").toString("base64")
-      div 
+      div
         className: "field-group"
-        input type:"text", placeholder:"Name"
-        input type:"text", placeholder:"Author"
-        labelValue "Status:", "unknown"
+        textInput "name", "Name"
+        textInput "author", "Author"
+        textInput "mail", "Email"
+        textInput "pin", "PIN"
+        labelValue "Status:", @state.status
         labelValue "Cells:", pattern.cells.length
         labelValue "Dimensions:", pattern.bbox().width()+" x "+pattern.bbox().height()
-        button 
+        button
           value:"claim!"
-          "Upload your claim!"
+          onClick: @uploadPattern
+          "Upload!"
     )
