@@ -14,10 +14,10 @@ module.exports = (CGOL_HOME, settings)->
   savePattern = (pdoc, tournamentName)->
     tdir = path.join CGOL_HOME, tournamentName
     pdir = path.join tdir, 'patterns'
-    pfile = path.join pdir, pdoc.author+".yaml"
-    isAuthorNameAlreadyInUse(pdoc.author).then (val)->
+    pfile = path.join pdir, pdoc.base64String+".yaml"
+    isPatternAlreadyInUse(pdoc.base64String).then (val)->
       if val
-        throw new Error('Nickname already in use!')
+        throw new Error('Pattern already in use!')
       else
         writeFile pfile, dump 
           name:pdoc.name
@@ -132,12 +132,12 @@ module.exports = (CGOL_HOME, settings)->
         data
         
 
-  isAuthorNameAlreadyInUse = (author)->
+  isPatternAlreadyInUse = (baseString)->
     readdir root:CGOL_HOME, entryType: 'files'
     .then (entryStream)->
       files = entryStream.files
         .map (entry)->entry.name
-      author+'.yaml' in files
+      baseString+'.yaml' in files
 
 
   allTournaments: allTournaments

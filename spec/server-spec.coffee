@@ -112,7 +112,7 @@ describe "The Service", ->
       author:'Joanne Doe'
       mail:'uploaded@tarent.de'
       elo:1000
-      base64String:'lkjfazakjds=='
+      base64String:'asfkjsdffjc'
       pin:'12345'
     auth =
       url:base+'/api/TestTournament/patterns'
@@ -123,11 +123,11 @@ describe "The Service", ->
           author:'Joanne Doe'
           mail:'uploaded@tarent.de'
           elo:1000
-          base64String:'lkjfazakjds=='
+          base64String:'asfkjsdffjc'
           pin:'12345'
     expect(request auth).to.be.fulfilled.then (resp)->
       expect(resp.statusCode).to.eql 200
-      pfile = path.join CGOL_HOME, 'TestTournament', 'patterns', pdoc.author+'.yaml'
+      pfile = path.join CGOL_HOME, 'TestTournament', 'patterns', pdoc.base64String+'.yaml'
       expect(loadYaml pfile).to.eql pdoc
 
 

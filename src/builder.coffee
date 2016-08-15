@@ -44,7 +44,7 @@ module.exports = ->
       author:"someone_"+patterns.length
       mail:"gol"+patterns.length+"@tarent.de"
       elo:100
-      base64String:"abcdef=="
+      base64String:"abcdef"+patterns.length
       pin:'t0ps3cr3t'
     doc = merge defaults, toArray arguments
     patterns.push doc

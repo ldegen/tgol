@@ -47,7 +47,7 @@ describe "The Repository",->
         name:tdoc.name
         pin:tdoc.pin
 
-      expect(loadYaml path.join patterndir, pdoc.author+".yaml").to.eql pdoc for pdoc in tdoc.patterns
+      expect(loadYaml path.join patterndir, pdoc.base64String+".yaml").to.eql pdoc for pdoc in tdoc.patterns
       expect(loadYaml path.join matchdir, mdoc.id+".yaml").to.eql mdoc for mdoc in tdoc.matches
 
   it "can list the names of all tournaments", ->
@@ -73,7 +73,7 @@ describe "The Repository",->
       base64String:"abcdefg=="
       pin:"12345"
     expect(repository.savePattern(pdoc,tdoc.name)).to.be.fulfilled.then ->
-      pfile = path.join pdir, pdoc.author+".yaml"
+      pfile = path.join pdir, pdoc.base64String+".yaml"
       expect(loadYaml pfile).to.eql pdoc
     
   it "wont persist two patterns with the same author name", ->
@@ -94,11 +94,11 @@ describe "The Repository",->
       author:"Mocha"
       mail:"repo-spec@tarent.de"
       elo:1000
-      base64String:"hjklmno=="
+      base64String:"abcdefg=="
       pin:"12345"
     expect(repository.savePattern(pdoc1, tdoc.name)).to.be.fulfilled.then ->
       expect(repository.savePattern(pdoc2, tdoc.name)).to.be.rejected
-      expect(repository.savePattern(pdoc2,tdoc.name)).to.be.rejectedWith("Nickname already in use!")
+      expect(repository.savePattern(pdoc2,tdoc.name)).to.be.rejectedWith("Pattern already in use!")
 
 
   it "can persist match data on the file system", ->
