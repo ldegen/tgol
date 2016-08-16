@@ -8,7 +8,26 @@ describe "The Service", ->
   fs = require "fs"
   request = Promise.promisify require "request"
   mkdir = Promise.promisify require "mkdirp"
-  rmdir = Promise.promisify require "rimraf"
+  exec = require("child_process").exec
+  rmdir = (dir) ->
+    new Promise (resolve,reject) ->
+      exec "rm -rf '#{dir}'", (error, stdout, stderr)->
+        if error?
+          reject error
+        else
+          resolve()
+
+  #rimraf = require "rimraf"
+  #rmdir = (dir)->
+  #  opts =
+  #    glob:false
+  #    emfileWait: 10
+  #  new Promise (resolve, reject) ->
+  #    rimraf dir, opts, (err)->
+  #      if err?
+  #        reject err
+  #      else
+  #        resolve()
   writeFile = Promise.promisify fs.writeFile
   readFile = Promise.promisify fs.readFile
   Utils = require "../src/util"
@@ -19,21 +38,17 @@ describe "The Service", ->
   repo = undefined
   pdoc = undefined
 
-  this.timeout(0)
+  this.timeout(8000)
+
+  _now = undefined
+  log = (s)->
+    #now = Date.now()
+    #d = if _now? then now - _now else 0
+    #_now = now
+    #console.log s, d
 
   property = (name)->(obj)->obj[name]
 
-  example = (gwt)->
-    gwt.given = gwt.given ? ->[]
-    ()->
-      Promise
-        .resolve(gwt.given(builder))
-        .then ()->
-          builder.buildTournaments()
-        .then (tournaments)->
-          Promise.all (repo.saveTournament tournament for tournament in tournaments)
-        .then(gwt.when)
-        .then(gwt.then)
 
   server = undefined
   settings = loadYaml path.resolve __dirname, "../settings.yaml"
@@ -43,7 +58,11 @@ describe "The Service", ->
   beforeEach ->
     builder = Builder()
     CGOL_HOME = tmpFileName @test
-    mkdir CGOL_HOME
+    log "beforeEach"
+    rmdir CGOL_HOME
+      .then -> log "rmdir complete"
+      .then -> mkdir CGOL_HOME
+      .then -> log "mkdir complete"
       .then ->
         repo = Repository CGOL_HOME
         tdoc = builder.tournament
@@ -82,13 +101,19 @@ describe "The Service", ->
               score:200
             pin:45678
           ]
-        repo.saveTournament(tdoc).then ->
+        repo.saveTournament(tdoc)
+      .then -> log "saveTournament complete"
+      .then ->
           server = Server CGOL_HOME, settings
           server.start()
+      .then -> log "server started"
   afterEach ->
+    log "afterEach"
     server
       .stop()
-      .then -> rmdir CGOL_HOME
+      .then -> log "stopped"
+      #.then -> rmdir CGOL_HOME
+      #.then -> log "rmdir complete"
 
 ##################################################################################################
 
@@ -133,13 +158,10 @@ describe "The Service", ->
 
   it "can request if a pattern has already been uploaded to a tournament and return an empty pattern if not", ->
     expect(request(base+'/api/TestTournament/patterns/lkjtewqfsdufafazakjds==')).to.be.fulfilled.then (resp)->
-      expect(resp.statusCode).to.eql 404
-      expect(JSON.parse resp.body).to.eql
-        name:''
-        author:''
-        mail:''
-        elo:0
-        pin:0
+      Promise.all [
+        expect(resp.statusCode).to.eql 404
+        expect(resp.body).to.be.empty
+      ]
 
 
   it "can also request this and get the already uploaded pattern", ->

@@ -64,18 +64,14 @@ module.exports = (CGOL_HOME, settings)->
   service.get '/api/:tournament/patterns/:base64String', (req, res)->
     repo
       .getPatternByBase64ForTournament(req.params.base64String, req.params.tournament)
-      .then (pdoc)->
-        if pdoc != undefined
+      .then(
+        (pdoc)->
           res.statusCode = 200
           res.json pdoc
-        else
-          pattern=
-            name:''
-            author:''
-            mail:''
-            elo:0
-            pin:0
-          res.status(404).json pattern
+        (err)->
+          res.status(404)
+          res.end()
+      )
                
 
   service.post '/api/:tournament/patterns',jsonParser, (req, res)->

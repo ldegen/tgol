@@ -53,8 +53,6 @@ module.exports = (CGOL_HOME, settings)->
     patterndir = path.join tdir, 'patterns'
 
     mkdir tdir
-      .then -> mkdir matchdir
-      .then -> mkdir patterndir
       .then -> writeFile metafile, dump
         name:tdoc.name
         pin: tdoc.pin
@@ -83,15 +81,11 @@ module.exports = (CGOL_HOME, settings)->
 
   getPatternByBase64ForTournament = (base64String, tournamentName)->
     pdir = path.join CGOL_HOME, tournamentName, 'patterns'
-    readdir root:pdir, depth:0, entryType:'files'
-      .then (entryStream)->
-        files = entryStream.files
-          .map (entry)->
-            loadYaml entry.fullPath
-        for file in files
-          if file.base64String == base64String
-            return file
-        return undefined
+    file = path.join pdir, base64String + ".yaml"
+    stat file
+      .then (stat)->
+        throw new Error "pattern does not exist" if not stat.isFile()
+        loadYaml file
 
 
   getPatternsAndMatchesForTournament = (tournamentName)->
