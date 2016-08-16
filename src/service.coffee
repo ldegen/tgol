@@ -11,6 +11,7 @@ module.exports = (CGOL_HOME, settings)->
   matchmaker = Matchmaker()
   validator = require('./validator')()
   packageJson = require "../package.json"
+  NoSuchPatternError = require "./no-such-pattern-error"
   service = Express()
 
   # client code
@@ -45,23 +46,24 @@ module.exports = (CGOL_HOME, settings)->
 
   # service root
   # TODO: move api routes to a separate module?
-  service.get '/api', (req,res)->
+  service.get '/api', (req,res, next)->
     repo
       .allTournaments()
       .then (tnames)->
         res.json
           version: require("../package.json").version
           tournaments: tnames
+      .catch next
 
 
-  service.get '/api/:tournamentName/leaderboard', (req, res)->
+  service.get '/api/:tournamentName/leaderboard', (req, res, next)->
     repo
       .getScores(req.params.tournamentName)
       .then (scores)->
         res.status(200).json(scores)
-                
+      .catch next
 
-  service.get '/api/:tournament/patterns/:base64String', (req, res)->
+  service.get '/api/:tournament/patterns/:base64String', (req, res, next)->
     repo
       .getPatternByBase64ForTournament(req.params.base64String, req.params.tournament)
       .then(
@@ -69,12 +71,15 @@ module.exports = (CGOL_HOME, settings)->
           res.statusCode = 200
           res.json pdoc
         (err)->
-          res.status(404)
-          res.end()
+          if err instanceof NoSuchPatternError
+            res.status(404)
+            res.end()
+          else throw err
       )
-               
+      .catch next
 
-  service.post '/api/:tournament/patterns',jsonParser, (req, res)->
+
+  service.post '/api/:tournament/patterns',jsonParser, (req, res, next)->
     pdoc = req.body.pdoc
     repo
       .savePattern(pdoc,req.params.tournament)
@@ -84,33 +89,34 @@ module.exports = (CGOL_HOME, settings)->
       .then null, (e)->
         res.statusCode = 901 #FIXME: what does 901 mean?
         res.sendFile path.resolve __dirname, '..', 'static', 'error.html'
+      .catch next
 
 
-  service.post '/api/:tournamentName/matches', jsonParser, (req, res)->
+  service.post '/api/:tournamentName/matches', jsonParser, (req, res,next)->
     mdoc = req.body.mdoc
     repo
       .saveMatch(mdoc, req.params.tournamentName)
       .then ->
         res.status(200).sendFile path.resolve __dirname, '..', 'static', 'index.html'
+      .catch next
 
-
-  service.get '/api/:tournamentName/matchmaker', (req, res)->
+  service.get '/api/:tournamentName/matchmaker', (req, res, next)->
     repo
       .getPatternsForTournament(req.params.tournamentName)
       .then (patterns)->
         pair = matchmaker.matchForElo(patterns)
         res.status(200).json pair
+      .catch next
 
-
-  service.get '/api/:tournamentName', (req, res)->
+  service.get '/api/:tournamentName', (req, res, next)->
     repo
       .getPatternsAndMatchesForTournament(req.params.tournamentName)
       .then (data)->
         res.status(200).json data
+      .catch next
 
-  
-  
-  # FIXME: This won't do. Routing logic needs to be done client-side. 
+
+  # FIXME: This won't do. Routing logic needs to be done client-side.
   service.get '/kiosk/leaderboard', (req, res) ->
     res.sendFile path.resolve __dirname, '..', 'static', 'leaderboard.html'
 
@@ -124,5 +130,17 @@ module.exports = (CGOL_HOME, settings)->
   #
   service.get '*',  (request, response)->
     response.sendFile path.resolve __dirname, '..', 'static', 'index.html'
+
+  service.use (err,req,res,next)->
+    if err
+      msg = err.stack ? err.toString()
+      res.status(500).json msg
+      console.error "unhandled error", msg
+    next()
+
+  # this is used to quickly swap out all persisted / cached state of the CGOL service
+  # Useful to speed up integration tests.
+  service.switchWorkspace  = (path)->
+    repo = Repository path, settings
 
   service

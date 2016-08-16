@@ -38,7 +38,7 @@ describe "The Service", ->
   repo = undefined
   pdoc = undefined
 
-  this.timeout(8000)
+  this.timeout(20000)
 
   _now = undefined
   log = (s)->
@@ -55,6 +55,26 @@ describe "The Service", ->
   settings.port = 9988
 
   base = "http://localhost:#{settings.port}"
+  
+  profiler = require "v8-profiler"
+  before ->
+    server = Server "/tmp", settings
+    server.start()
+      .then -> log "server started, warming up"
+      .then -> request base+"/js/vendor.js" # triggers minification of vendor code
+      .then -> request base+"/js/client.js" # triggers concatenation of our own client code
+      .then -> log "ready to go"
+
+    #profiler.startProfiling('1', true)  
+  after ()->
+    server
+      .stop()
+      .then -> log "server stopped"
+    #profiler
+      #.stopProfiling()
+      #.export()
+      #.pipe(fs.createWriteStream('/tmp/profile.json'))
+      #.on 'finish', ->done()
   beforeEach ->
     builder = Builder()
     CGOL_HOME = tmpFileName @test
@@ -104,16 +124,10 @@ describe "The Service", ->
         repo.saveTournament(tdoc)
       .then -> log "saveTournament complete"
       .then ->
-          server = Server CGOL_HOME, settings
-          server.start()
-      .then -> log "server started"
+          server.switchWorkspace CGOL_HOME
+      .then -> log "workspace switched"
   afterEach ->
     log "afterEach"
-    server
-      .stop()
-      .then -> log "stopped"
-      #.then -> rmdir CGOL_HOME
-      #.then -> log "rmdir complete"
 
 ##################################################################################################
 
@@ -166,15 +180,16 @@ describe "The Service", ->
 
   it "can also request this and get the already uploaded pattern", ->
     expect(request(base+'/api/TestTournament/patterns/lkjfazakjds==')).to.be.fulfilled.then (resp)->
-      expect(resp.statusCode).to.eql 200
-      expect(JSON.parse resp.body).to.eql
-        name:'MyPattern'
-        author:'John Doe'
-        mail:'john@tarent.de'
-        elo:1000
-        base64String:'lkjfazakjds=='
-        pin:'12345'
-    
+      Promise.all [
+        expect(resp.statusCode).to.eql 200
+        expect(JSON.parse resp.body).to.eql
+          name:'MyPattern'
+          author:'John Doe'
+          mail:'john@tarent.de'
+          elo:1000
+          base64String:'lkjfazakjds=='
+          pin:'12345'
+      ]
   
   it "can persist an uploaded match", ->
     mdoc= 

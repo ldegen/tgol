@@ -3,6 +3,7 @@ describe "The Repository",->
   Builder = require "../src/builder"
   Repository = require "../src/repository"
   Promise = require "bluebird"
+  NoSuchPatternError = require "../src/no-such-pattern-error"
   path = require "path"
   fs = require "fs"
   mkdir = Promise.promisify require "mkdirp"
@@ -77,29 +78,6 @@ describe "The Repository",->
     expect(repository.savePattern(pdoc,tdoc.name)).to.be.fulfilled.then ->
       pfile = path.join pdir, pdoc.mail+".yaml"
       expect(loadYaml pfile).to.eql pdoc
-
-  it "wont persist two patterns with the same content", ->
-    tdoc = b.tournament()
-    tdir = path.join CGOL_HOME, tdoc.name
-    mkdir tdir
-    pdir = path.join tdir, 'patterns'
-    mkdir pdir
-    pdoc1 = b.pattern
-      name:"TestPattern1"
-      author:"Mocha"
-      mail:"repo-spec@tarent.de"
-      elo:1000
-      base64String:"abcdefg=="
-      pin:"12345"
-    pdoc2 = b.pattern
-      name:"TestPattern2"
-      author:"Maker"
-      mail:"repo-specX@tarent.de"
-      elo:1000
-      base64String:"abcdefg=="
-      pin:"12345"
-    expect(repository.savePattern(pdoc1, tdoc.name)).to.be.fulfilled.then ->
-      expect(repository.savePattern(pdoc2,tdoc.name)).to.be.rejectedWith("Pattern already in use!")
 
 
   it "can persist match data on the file system", ->
@@ -185,7 +163,7 @@ describe "The Repository",->
        Promise.all [
          expect(repository.getPatternByBase64ForTournament(pdoc1.base64String, tdoc.name)).to.eventually.eql pdoc1
          expect(repository.getPatternByBase64ForTournament(pdoc2.base64String, tdoc.name)).to.eventually.eql pdoc2
-         expect(repository.getPatternByBase64ForTournament('abcetasd==', tdoc.name)).to.be.rejected
+         expect(repository.getPatternByBase64ForTournament('abcetasd==', tdoc.name)).to.be.rejectedWith(NoSuchPatternError)
        ]
 
 
@@ -209,8 +187,8 @@ describe "The Repository",->
     tdoc = b.tournament
       name:'TestTournament'
       patterns:[
-        {name:'p1'}
-        {name:'p2'}
+        {name:'p1', mail:'m1'}
+        {name:'p2', mail:'m2'}
       ]
       matches:[
         {id:'m1'}
