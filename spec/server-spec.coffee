@@ -255,6 +255,3 @@ describe "The Service", ->
         elo:9001
         base64String:'ItsOver9000OMG='
         pin:'98765'
-
-
-  

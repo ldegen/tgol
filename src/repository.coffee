@@ -7,6 +7,7 @@ module.exports = (CGOL_HOME, settings)->
   readdir = Promise.promisify require "readdirp"
   writeFile = Promise.promisify fs.writeFile
   readFile = Promise.promisify fs.readFile
+  stat = Promise.promisify fs.stat
   dump = require("js-yaml").dump
   loadYaml = require("./load-yaml")
   validator = require("./validator")()
@@ -28,19 +29,21 @@ module.exports = (CGOL_HOME, settings)->
     tdir = path.join CGOL_HOME, tournamentName
     mdir = path.join tdir, 'matches'
     mfile = path.join mdir, mdoc.id+".yaml"
-    writeFile mfile, dump 
-      id: mdoc.id
-      pattern1:
-        base64String:mdoc.pattern1.base64String
-        translation:mdoc.pattern1.translation
-        modulo:mdoc.pattern1.modulo
-        score:mdoc.pattern1.score
-      pattern2:
-        base64String:mdoc.pattern2.base64String
-        translation:mdoc.pattern2.translation
-        modulo:mdoc.pattern2.modulo
-        score:mdoc.pattern2.score
-      pin: mdoc.pin
+    mkdir mdir
+      .then ->
+        writeFile mfile, dump 
+          id: mdoc.id
+          pattern1:
+            base64String:mdoc.pattern1.base64String
+            translation:mdoc.pattern1.translation
+            modulo:mdoc.pattern1.modulo
+            score:mdoc.pattern1.score
+          pattern2:
+            base64String:mdoc.pattern2.base64String
+            translation:mdoc.pattern2.translation
+            modulo:mdoc.pattern2.modulo
+            score:mdoc.pattern2.score
+          pin: mdoc.pin
        
 
   saveTournament = (tdoc)->
@@ -126,6 +129,12 @@ module.exports = (CGOL_HOME, settings)->
           mail: 'service-spec@tarent.de'}
         ]
         data
+
+
+  checkPatternIsUnique = (baseString,tournamentName)->
+    file = path.join CGOL_HOME, tournamentName, "patterns", baseString+'.yaml'
+    stat file
+      .then ((stats)-> throw new Error("Pattern already in use!") if stats.isFile()), (e)-> true
 
 
   allTournaments: allTournaments

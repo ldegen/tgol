@@ -46,7 +46,8 @@ module.exports = (CGOL_HOME, settings)->
   # service root
   # TODO: move api routes to a separate module?
   service.get '/api', (req,res)->
-    repo.allTournaments()
+    repo
+      .allTournaments()
       .then (tnames)->
         res.json
           version: require("../package.json").version
@@ -54,13 +55,15 @@ module.exports = (CGOL_HOME, settings)->
 
 
   service.get '/api/:tournamentName/leaderboard', (req, res)->
-    repo.getScores(req.params.tournamentName)
+    repo
+      .getScores(req.params.tournamentName)
       .then (scores)->
         res.status(200).json(scores)
                 
 
   service.get '/api/:tournament/patterns/:base64String', (req, res)->
-    repo.getPatternByBase64ForTournament(req.params.base64String, req.params.tournament)
+    repo
+      .getPatternByBase64ForTournament(req.params.base64String, req.params.tournament)
       .then (pdoc)->
         if pdoc != undefined
           res.statusCode = 200
@@ -77,31 +80,37 @@ module.exports = (CGOL_HOME, settings)->
 
   service.post '/api/:tournament/patterns',jsonParser, (req, res)->
     pdoc = req.body.pdoc
-    try
-      repo.savePattern(pdoc,req.params.tournament).then ->
+    repo
+      .savePattern(pdoc,req.params.tournament)
+      .then ->
         res.statusCode = 200
         res.sendFile path.resolve __dirname, '..', 'static', 'index.html'
-    catch e
-      res.statusCode = 901
-      res.sendFile path.resolve __dirname, '..', 'static', 'error.html'
+      .then null, (e)->
+        res.statusCode = 901 #FIXME: what does 901 mean?
+        res.sendFile path.resolve __dirname, '..', 'static', 'error.html'
 
 
   service.post '/api/:tournamentName/matches', jsonParser, (req, res)->
     mdoc = req.body.mdoc
-    repo.saveMatch(mdoc, req.params.tournamentName)
+    repo
+      .saveMatch(mdoc, req.params.tournamentName)
       .then ->
         res.status(200).sendFile path.resolve __dirname, '..', 'static', 'index.html'
 
 
   service.get '/api/:tournamentName/matchmaker', (req, res)->
-    repo.getPatternsForTournament(req.params.tournamentName).then (patterns)->
-      pair = matchmaker.matchForElo(patterns)
-      res.status(200).json pair
+    repo
+      .getPatternsForTournament(req.params.tournamentName)
+      .then (patterns)->
+        pair = matchmaker.matchForElo(patterns)
+        res.status(200).json pair
 
 
   service.get '/api/:tournamentName', (req, res)->
-    repo.getPatternsAndMatchesForTournament(req.params.tournamentName).then (data)->
-      res.status(200).json data
+    repo
+      .getPatternsAndMatchesForTournament(req.params.tournamentName)
+      .then (data)->
+        res.status(200).json data
 
   
   
