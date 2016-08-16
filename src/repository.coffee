@@ -9,23 +9,19 @@ module.exports = (CGOL_HOME, settings)->
   readFile = Promise.promisify fs.readFile
   dump = require("js-yaml").dump
   loadYaml = require("./load-yaml")
-
+  validator = require("./validator")()
 
   savePattern = (pdoc, tournamentName)->
     tdir = path.join CGOL_HOME, tournamentName
     pdir = path.join tdir, 'patterns'
-    pfile = path.join pdir, pdoc.base64String+".yaml"
-    isPatternAlreadyInUse(pdoc.base64String).then (val)->
-      if val
-        throw new Error('Pattern already in use!')
-      else
-        writeFile pfile, dump 
-          name:pdoc.name
-          author:pdoc.author
-          mail:pdoc.mail
-          elo:pdoc.elo
-          base64String:pdoc.base64String
-          pin:pdoc.pin
+    pfile = path.join pdir, pdoc.mail+".yaml"
+    writeFile pfile, dump 
+      name:pdoc.name
+      author:pdoc.author
+      mail:pdoc.mail
+      elo:pdoc.elo
+      base64String:pdoc.base64String
+      pin:pdoc.pin
 
     
   saveMatch = (mdoc, tournamentName)->
@@ -130,14 +126,6 @@ module.exports = (CGOL_HOME, settings)->
           mail: 'service-spec@tarent.de'}
         ]
         data
-        
-
-  isPatternAlreadyInUse = (baseString)->
-    readdir root:CGOL_HOME, entryType: 'files'
-    .then (entryStream)->
-      files = entryStream.files
-        .map (entry)->entry.name
-      baseString+'.yaml' in files
 
 
   allTournaments: allTournaments

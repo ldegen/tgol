@@ -14,6 +14,7 @@ describe "The Repository",->
   repository = undefined
   CGOL_HOME = undefined
   b=undefined
+  Utils = require "../src/util"
 
   beforeEach ->
     b = Builder()
@@ -47,7 +48,7 @@ describe "The Repository",->
         name:tdoc.name
         pin:tdoc.pin
 
-      expect(loadYaml path.join patterndir, pdoc.base64String+".yaml").to.eql pdoc for pdoc in tdoc.patterns
+      expect(loadYaml path.join patterndir, pdoc.mail+".yaml").to.eql pdoc for pdoc in tdoc.patterns
       expect(loadYaml path.join matchdir, mdoc.id+".yaml").to.eql mdoc for mdoc in tdoc.matches
 
   it "can list the names of all tournaments", ->
@@ -73,33 +74,9 @@ describe "The Repository",->
       base64String:"abcdefg=="
       pin:"12345"
     expect(repository.savePattern(pdoc,tdoc.name)).to.be.fulfilled.then ->
-      pfile = path.join pdir, pdoc.base64String+".yaml"
+      pfile = path.join pdir, pdoc.mail+".yaml"
       expect(loadYaml pfile).to.eql pdoc
     
-  it "wont persist two patterns with the same author name", ->
-    tdoc = b.tournament
-    tdir = path.join CGOL_HOME, tdoc.name
-    mkdir tdir
-    pdir = path.join tdir, 'patterns'
-    mkdir pdir
-    pdoc1 = b.pattern
-      name:"TestPattern1"
-      author:"Mocha"
-      mail:"repo-spec@tarent.de"
-      elo:1000
-      base64String:"abcdefg=="
-      pin:"12345"
-    pdoc2 = b.pattern
-      name:"TestPattern2"
-      author:"Mocha"
-      mail:"repo-spec@tarent.de"
-      elo:1000
-      base64String:"abcdefg=="
-      pin:"12345"
-    expect(repository.savePattern(pdoc1, tdoc.name)).to.be.fulfilled.then ->
-      expect(repository.savePattern(pdoc2, tdoc.name)).to.be.rejected
-      expect(repository.savePattern(pdoc2,tdoc.name)).to.be.rejectedWith("Pattern already in use!")
-
 
   it "can persist match data on the file system", ->
     tdoc = b.tournament
@@ -236,4 +213,3 @@ describe "The Repository",->
         expect(data.matches).to.have.a.lengthOf 1
         expect(data.patterns[0]).to.have.a.property('name').which.is.eql 'p1'
         expect(data.matches[0]).to.have.a.property('id').which.is.eql 'm1'
-

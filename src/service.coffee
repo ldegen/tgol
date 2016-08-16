@@ -9,7 +9,7 @@ module.exports = (CGOL_HOME, settings)->
   jsonParser = bodyParser.json()
   Matchmaker = require './matchmaker'
   matchmaker = Matchmaker()
-
+  validator = require('./validator')()
   packageJson = require "../package.json"
   service = Express()
 

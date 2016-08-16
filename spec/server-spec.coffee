@@ -11,7 +11,7 @@ describe "The Service", ->
   rmdir = Promise.promisify require "rimraf"
   writeFile = Promise.promisify fs.writeFile
   readFile = Promise.promisify fs.readFile
-
+  Utils = require "../src/util"
   loadYaml = require "../src/load-yaml"
   Server = require "../src/server"
   CGOL_HOME = undefined
@@ -127,7 +127,7 @@ describe "The Service", ->
           pin:'12345'
     expect(request auth).to.be.fulfilled.then (resp)->
       expect(resp.statusCode).to.eql 200
-      pfile = path.join CGOL_HOME, 'TestTournament', 'patterns', pdoc.base64String+'.yaml'
+      pfile = path.join CGOL_HOME, 'TestTournament', 'patterns', pdoc.mail+'.yaml'
       expect(loadYaml pfile).to.eql pdoc
 
 
@@ -255,3 +255,6 @@ describe "The Service", ->
         elo:9001
         base64String:'ItsOver9000OMG='
         pin:'98765'
+
+
+  
