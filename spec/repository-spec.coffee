@@ -43,13 +43,14 @@ describe "The Repository",->
       metafile = path.join tdir, 'meta.yaml'
       matchdir = path.join tdir, 'matches'
       patterndir = path.join tdir, 'patterns'
-      expect(loadYaml metafile).to.eql
-        name:tdoc.name
-        pin:tdoc.pin
+      Promise.all [
+        expect(loadYaml metafile).to.eql
+          name:tdoc.name
+          pin:tdoc.pin
 
-      expect(loadYaml path.join patterndir, pdoc.base64String+".yaml").to.eql pdoc for pdoc in tdoc.patterns
-      expect(loadYaml path.join matchdir, mdoc.id+".yaml").to.eql mdoc for mdoc in tdoc.matches
-
+        expect(loadYaml path.join patterndir, pdoc.base64String+".yaml").to.eql pdoc for pdoc in tdoc.patterns
+        expect(loadYaml path.join matchdir, mdoc.id+".yaml").to.eql mdoc for mdoc in tdoc.matches
+      ]
   it "can list the names of all tournaments", ->
     expect(Promise.all [
       mkdir path.join CGOL_HOME,"t1"
@@ -59,7 +60,7 @@ describe "The Repository",->
       expect(repository.allTournaments()).to.eventually.eql ['/t1','/t2','/t3']
 
   it "can persist a pattern on the local file system", ->
-    tdoc = b.tournament
+    tdoc = b.tournament()
     tournamentName = tdoc.name
     tdir = path.join CGOL_HOME, tdoc.name
     mkdir tdir
@@ -75,9 +76,9 @@ describe "The Repository",->
     expect(repository.savePattern(pdoc,tdoc.name)).to.be.fulfilled.then ->
       pfile = path.join pdir, pdoc.base64String+".yaml"
       expect(loadYaml pfile).to.eql pdoc
-    
-  it "wont persist two patterns with the same author name", ->
-    tdoc = b.tournament
+
+  it "wont persist two patterns with the same content", ->
+    tdoc = b.tournament()
     tdir = path.join CGOL_HOME, tdoc.name
     mkdir tdir
     pdir = path.join tdir, 'patterns'
@@ -91,23 +92,22 @@ describe "The Repository",->
       pin:"12345"
     pdoc2 = b.pattern
       name:"TestPattern2"
-      author:"Mocha"
-      mail:"repo-spec@tarent.de"
+      author:"Maker"
+      mail:"repo-specX@tarent.de"
       elo:1000
       base64String:"abcdefg=="
       pin:"12345"
     expect(repository.savePattern(pdoc1, tdoc.name)).to.be.fulfilled.then ->
-      expect(repository.savePattern(pdoc2, tdoc.name)).to.be.rejected
       expect(repository.savePattern(pdoc2,tdoc.name)).to.be.rejectedWith("Pattern already in use!")
 
 
   it "can persist match data on the file system", ->
-    tdoc = b.tournament
+    tdoc = b.tournament()
     tdir = path.join CGOL_HOME, tdoc.name
     mkdir tdir
     mdir = path.join tdir, 'matches'
     mkdir mdir
-    mdoc = 
+    mdoc =
       id:'123'
       pattern1:
         base64String:'kjadfajgkja=='
@@ -122,11 +122,11 @@ describe "The Repository",->
       pin:12345
     expect(repository.saveMatch(mdoc, tdoc.name)).to.be.fulfilled.then ->
       mfile = path.join mdir, mdoc.id+'.yaml'
-      expect(loadYaml mfile).to.eql mdoc      
+      expect(loadYaml mfile).to.eql mdoc
 
 
   it "can load an array of all pattern documents from the file system", ->
-    tdoc = b.tournament
+    tdoc = b.tournament()
     tdir = path.join CGOL_HOME, tdoc.name
     mkdir tdir
     pdir = path.join tdir, 'patterns'
@@ -145,16 +145,20 @@ describe "The Repository",->
       elo:1000
       base64String:"hjklmno=="
       pin:"12345"
-    expect(repository.savePattern(pdoc1, tdoc.name)).to.be.fulfilled.then ->
-     expect(repository.savePattern(pdoc2, tdoc.name)).to.be.fulfilled.then ->
-       expect(repository.getPatternsForTournament(tdoc.name)).to.be.fulfilled.then (patterns)->
+    expect(
+      repository.savePattern(pdoc1, tdoc.name)
+        .then -> repository.savePattern(pdoc2, tdoc.name)
+        .then -> repository.getPatternsForTournament(tdoc.name)
+    ).to.be.fulfilled.then (patterns)->
+      Promise.all [
          expect(patterns).to.be.an('array')
          expect(patterns).to.have.length(2)
          expect(patterns).to.include(pdoc1)
          expect(patterns).to.include(pdoc2)
+      ]
 
   it "can load a single pattern document by its base 64 String", ->
-    tdoc = b.tournament
+    tdoc = b.tournament()
     tdir = path.join CGOL_HOME, tdoc.name
     mkdir tdir
     pdir = path.join tdir, 'patterns'
@@ -173,22 +177,19 @@ describe "The Repository",->
       elo:1000
       base64String:"hjklmno=="
       pin:"12345"
-    expect(repository.savePattern(pdoc1, tdoc.name)).to.be.fulfilled.then ->
-     expect(repository.savePattern(pdoc2, tdoc.name)).to.be.fulfilled.then ->
-       expect(repository.getPatternByBase64ForTournament(pdoc1.base64String, tdoc.name)).to.be.fulfilled.then (pattern)->
-         expect(pattern).to.not.be.undefinded
-         expect(pattern).to.not.be.an('array')
-         expect(pattern).to.be.eql(pdoc1)
-       expect(repository.getPatternByBase64ForTournament(pdoc2.base64String, tdoc.name)).to.be.fulfilled.then (pattern2)->
-         expect(pattern2).to.not.be.undefinded
-         expect(pattern2).to.not.be.an('array')
-         expect(pattern2).to.be.eql(pdoc2)
-       expect(repository.getPatternByBase64ForTournament('abcetasd==', tdoc.name)).to.be.fulfilled.then (pattern3)->
-         expect(pattern3).to.be.undefinded
+    expect(
+      repository.savePattern(pdoc1, tdoc.name)
+        .then -> repository.savePattern(pdoc2, tdoc.name)
+    ).to.be.fulfilled.then ->
+       Promise.all [
+         expect(repository.getPatternByBase64ForTournament(pdoc1.base64String, tdoc.name)).to.eventually.eql pdoc1
+         expect(repository.getPatternByBase64ForTournament(pdoc2.base64String, tdoc.name)).to.eventually.eql pdoc2
+         expect(repository.getPatternByBase64ForTournament('abcetasd==', tdoc.name)).to.eventually.be.undefined
+       ]
 
 
   it "returns undefined if no pattern was found for the given base64 string", ->
-    tdoc = b.tournament
+    tdoc = b.tournament()
     tdir = path.join CGOL_HOME, tdoc.name
     mkdir tdir
     pdir = path.join tdir, 'patterns'
@@ -200,21 +201,27 @@ describe "The Repository",->
       elo:1000
       base64String:"abcdefg=="
       pin:"12345"
-    expect(repository.savePattern(pdoc1, tdoc.name)).to.be.fulfilled.then ->
-      expect(repository.getPatternByBase64ForTournament("liuagasfd==", tdoc.name)).to.be.fulfilled.then (pattern)->
-        expect(pattern).to.eql undefined
-        expect(pattern).to.not.be.eql pdoc1
+    expect(
+      repository.savePattern(pdoc1, tdoc.name)
+        .then -> repository.getPatternByBase64ForTournament("liuagasfd==", tdoc.name)
+    ).to.be.fulfilled.then (pattern)->
+        Promise.all [
+          expect(pattern).to.eql undefined
+          expect(pattern).to.not.be.eql pdoc1
+        ]
 
 
   it "can get an array of player information for the leaderboard", ->
-    tdoc = b.tournament
-    tdir = path.join CGOL_HOME, tdoc.name 
-    mkdir tdir
+    tdoc = b.tournament()
+    tdir = path.join CGOL_HOME, tdoc.name
     mdir = path.join tdir, 'matches'
-    mkdir mdir
-    expect(repository.getScores(tdoc.name)).to.be.fulfilled.then (scores)->
-      expect(scores).to.be.an('array')
-      expect(scores[0]).to.have.a.property('score')
+    expect(
+      mkdir(mdir).then -> repository.getScores(tdoc.name)
+    ).to.be.fulfilled.then (scores)->
+      Promise.all [
+        expect(scores).to.be.an('array')
+        expect(scores[0]).to.have.a.property('score')
+      ]
 
 
   it "can get a collection of patterns and matches for a tournament", ->
@@ -229,11 +236,12 @@ describe "The Repository",->
       ]
     expect(repository.saveTournament(tdoc)).to.be.fulfilled.then ->
       expect(repository.getPatternsAndMatchesForTournament(tdoc.name)).to.be.fulfilled.then (data)->
-        expect(data).to.be.an('object')
-        expect(data).to.have.a.property('patterns').which.is.an('array')
-        expect(data).to.have.a.property('matches').which.is.an('array')
-        expect(data.patterns).to.have.a.lengthOf 2
-        expect(data.matches).to.have.a.lengthOf 1
-        expect(data.patterns[0]).to.have.a.property('name').which.is.eql 'p1'
-        expect(data.matches[0]).to.have.a.property('id').which.is.eql 'm1'
-
+        Promise.all [
+          expect(data).to.be.an('object')
+          expect(data).to.have.a.property('patterns').which.is.an('array')
+          expect(data).to.have.a.property('matches').which.is.an('array')
+          expect(data.patterns).to.have.a.lengthOf 2
+          expect(data.matches).to.have.a.lengthOf 1
+          expect(data.patterns[0]).to.have.a.property('name').which.is.eql 'p1'
+          expect(data.matches[0]).to.have.a.property('id').which.is.eql 'm1'
+        ]
