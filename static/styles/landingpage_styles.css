@@ -1,32 +1,324 @@
-#logo{
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  position: relative;
+/*******************/
+/*table of content*/
+/*******************/
+
+/* 1. browser resest */
+/* 2. global
+/* 3. links
+/* 4. gol landingpage
+/* 5. footer
+/* 6. leaderboard
+/* 7. tables
+/* 8. media querie for disply < 800px
+
+
+
+/* 1. browser resest
+   ========================================================================== */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
 }
 
-.tarent_logo{
-  padding: 5%;
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
 }
+
+body {
+    line-height: 1;
+}
+
+ol, ul {
+    list-style: none;
+}
+
+blockquote, q {
+    quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* 2. global
+   ========================================================================== */
+
+html {
+    min-height: 100%;
+    position: relative;
+}
+
+body {
+    color: #333333;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42em;
+    margin: 0 0 170px;
+}
+
+
+/* 3. links
+   ========================================================================== */
+
+a, a:visited {
+    color: #cc0000;
+}
+
+a:hover {
+    color: #707070;
+}
+
+
+/* 4. gol landingpage
+   ========================================================================== */
 
 .background_container {
-  width:100%;
-  height: 100%;
+    border-top: 6px solid #cc0000;
 }
 
-.text_container{
-  text-align: center;
-  margin-left: 33%;
-  margin-right: 33%;
+.wrapper {
+    margin: 0 auto 90px;
+    width: 50%;
 }
 
-.link_container{
-  text-align: center;
-  margin: 5px;
-  padding: 3px;
+img#logo {
+    display: block;
+    margin: 80px auto 90px;
 }
 
-.footer_paragraph{
-  font-size: 9px;
-  float: right;
+.text_container p {
+    margin-bottom: 8px;
+}
+
+.text_container p:last-of-type {
+    margin-bottom: 50px;
+
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+.links > .link_container:last-of-type {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.btn {
+    background: #f00;
+    background: -webkit-linear-gradient(#f00, #960000);
+    background: linear-gradient(#f00, #960000);
+    border-radius: 5px;
+    color: #fff;
+    display: inline-block;
+    padding: 8px 20px;
+    font: normal 700 24px/1 "Open Sans", sans-serif;
+    text-align: center;
+    text-shadow: 1px 1px 0 #666;
+    text-decoration: inherit;
+    margin-top: 50px;
+}
+
+.btn:hover {
+    color: #fff;
+}
+
+
+/* 5. footer
+   ========================================================================== */
+
+footer {
+    background-color: #cc0000;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 110px;
+    width: 100%;
+
+}
+
+p.footer_paragraph {
+    color: #fff;
+    font-size: 15px;
+    margin: 0px auto;
+    padding: 50px 0 40px;
+    text-align: center;
+    width: 50%;
+}
+
+
+
+/* 6. leaderboard
+   ========================================================================== */
+
+h1 {
+    color: #c00;
+    font-size: 36px;
+    font-weight: 600;
+    margin: 80px 0 30px;
+}
+
+
+/* 7. tables
+   ========================================================================== */
+
+/**
+
+/*!
+Pure v0.6.0
+Copyright 2014 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+https://github.com/yahoo/pure/blob/master/LICENSE.md
+*/
+/*!
+
+
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+td,
+th {
+    padding: 0;
+}
+
+.pure-table {
+    /* Remove spacing between table cells (from Normalize.css) */
+    border-collapse: collapse;
+    border-spacing: 0;
+    empty-cells: show;
+    border: 1px solid #cbcbcb;
+    width: 100%;
+}
+
+.pure-table caption {
+    color: #000;
+    font: italic 85%/1 arial, sans-serif;
+    padding: 1em 0;
+    text-align: center;
+}
+
+.pure-table td,
+.pure-table th {
+    border-left: 1px solid #cbcbcb;/*  inner column border */
+    border-width: 0 0 0 1px;
+    font-size: inherit;
+    margin: 0;
+    overflow: visible; /*to make ths where the title is really long work*/
+    padding: 0.5em 1em; /* cell padding */
+}
+
+/* Consider removing this next declaration block, as it causes problems when
+there's a rowspan on the first cell. Case added to the tests. issue#432 */
+.pure-table td:first-child,
+.pure-table th:first-child {
+    border-left-width: 0;
+}
+
+.pure-table thead {
+    background-color: #e0e0e0;
+    color: #000;
+    text-align: left;
+    vertical-align: bottom;
+}
+
+.pure-table td {
+    background-color: transparent;
+}
+
+tr:nth-of-type(even) td {
+    background-color: #f2f2f2;
+}
+
+/* nth-child selector for modern browsers */
+.pure-table-striped tr:nth-child(2n-1) td {
+    background-color: #f2f2f2;
+}
+
+/* BORDERED TABLES */
+.pure-table-bordered td {
+    border-bottom: 1px solid #cbcbcb;
+}
+.pure-table-bordered tbody > tr:last-child > td {
+    border-bottom-width: 0;
+}
+
+/* HORIZONTAL BORDERED TABLES */
+
+.pure-table-horizontal td,
+.pure-table-horizontal th {
+    border-width: 0 0 1px 0;
+    border-bottom: 1px solid #cbcbcb;
+}
+.pure-table-horizontal tbody > tr:last-child > td {
+    border-bottom-width: 0;
+}
+
+
+
+
+
+/* 8. media querie for disply < 800px
+   ========================================================================== */
+
+
+@media (max-width: 799px) {
+
+    .wrapper {
+        margin: 0 auto 90px;
+        width: 100%;
+    }
+
+   .text_container p {
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+
+    .links {
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+
+    h1 {
+        margin: 80px 10% 30px;
+    }
+
+    .pure-table {
+        margin: 0 10% 0 10%;
+        width: 80%;
+    }
+
+
+
 }

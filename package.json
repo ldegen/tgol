@@ -63,6 +63,7 @@
   "bundleDependencies": [
     "baconjs",
     "bluebird",
+    "body-parser",
     "browserify-middleware",
     "bulk-require",
     "coffeeify",
@@ -72,6 +73,7 @@
     "d3-zoom",
     "deepmerge",
     "document-ready",
+    "elo-rank",
     "express",
     "js-yaml",
     "kbpgp",
