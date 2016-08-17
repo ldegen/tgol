@@ -65,9 +65,10 @@ module.exports = (CGOL_HOME, settings)->
       .catch next
 
   service.get '/api/:tournament/patterns/:base64String', (req, res, next)->
-    data = new Pattern req.params.base64String
-      .minimize()
-      .encodeSync()
+    data = req.params.base64String
+    #data = new Pattern req.params.base64String
+    #  .minimize()
+    #  .encodeSync()
 
     repo
       .getPatternByBase64ForTournament(data, req.params.tournament)

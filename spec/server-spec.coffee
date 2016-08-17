@@ -153,7 +153,7 @@ describe "The Service", ->
       author:'Joanne Doe'
       mail:'uploaded@tarent.de'
       elo:1000
-      base64String:p.encodeSync()
+      base64String:p.minimize().encodeSync()
       pin:'12345'
     auth =
       url:base+'/api/TestTournament/patterns'
