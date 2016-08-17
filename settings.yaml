@@ -1,3 +1,9 @@
 ---
 
 port: 9999
+minify:
+  vendor: true
+  client: false
+sourceMaps:
+  vendor: false
+  client: true

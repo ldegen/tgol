@@ -9,7 +9,7 @@ module.exports = (CGOL_HOME, settings)->
   jsonParser = bodyParser.json()
   Matchmaker = require './matchmaker'
   matchmaker = Matchmaker()
-  validator = require('./validator')(CGOL_HOME)
+  Validator = require('./validator')
   packageJson = require "../package.json"
   NoSuchPatternError = require "./no-such-pattern-error"
   service = Express()
@@ -38,9 +38,12 @@ module.exports = (CGOL_HOME, settings)->
     'bluebird'
   ]
   service.get '/js/vendor.js', browserify shared,
-    debug:false
-    minify:true
-  service.get '/js/client.js', browserify entry, external:shared
+    debug:settings.sourceMaps.vendor
+    minify:settings.minify.vendor
+  service.get '/js/client.js', browserify entry, 
+    external:shared
+    debug:settings.sourceMaps.client
+    minify:settings.minify.client
 
   # static assets
   service.use Express.static('static')
@@ -87,28 +90,14 @@ module.exports = (CGOL_HOME, settings)->
 
   service.post '/api/:tournament/patterns',jsonParser, (req, res, next)->
     pdoc = req.body.pdoc
-    if validator.validatePattern(pdoc)
-      validator.isMailAlreadyInUse(pdoc.mail, req.params.tournament)
-      pattern = new Pattern(pdoc.base64String)
-      pdoc.base64String = pattern.minimize().encodeSync()
-      validator.isPatternAlreadyInUse(pdoc, req.params.tournament)
-        .then (usage)->
-          if not usage
-            repo
-              .savePattern(pdoc,req.params.tournament)
-              .then ->
-                res.statusCode = 200
-                res.json pdoc
-              .then null, (e)->
-                res.statusCode = 901 #FIXME: what does 901 mean?
-                res.sendFile path.resolve __dirname, '..', 'static', 'error.html'
-              .catch next
-          else
-            res.status(401).sendFile path.resolve __dirname, '..', 'static', 'error.html'
-        .catch (e)->
-          res.status(402).sendFile path.resolve __dirname, '..', 'static', 'error.html'
-    else
-      res.status(403).sendFile path.resolve __dirname, '..', 'static', 'error.html'
+    validate = Validator repo, req.params.tournament
+    validate pdoc
+      .then ->
+        pdoc.base64String = new Pattern(pdoc.base64String).minimize().encodeSync()
+        repo.savePattern(pdoc,req.params.tournament)
+      .then ->
+        res.json pdoc
+      .catch next
 
 
   service.post '/api/:tournamentName/matches', jsonParser, (req, res,next)->
@@ -155,8 +144,16 @@ module.exports = (CGOL_HOME, settings)->
   service.use (err,req,res,next)->
     if err
       msg = err.stack ? err.toString()
-      res.status(500).json msg
-      console.error "unhandled error", msg
+      if err instanceof require "./domain-error"
+        console.error "domain error", msg
+        res
+          .status err.code
+          .json
+            message:msg
+            type: err.constructor
+      else
+        console.error "unhandled error", msg
+        res.status(500).json message: msg, type: null
     next()
 
   # this is used to quickly swap out all persisted / cached state of the CGOL service

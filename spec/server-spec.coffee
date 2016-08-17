@@ -4,7 +4,7 @@ describe "The Service", ->
   Builder = require "../src/builder"
   Repository = require "../src/repository"
   Pattern = require "../src/pattern"
-
+  merge = require "deepmerge"
   path = require "path"
   fs = require "fs"
   request = Promise.promisify require "request"
@@ -18,17 +18,6 @@ describe "The Service", ->
         else
           resolve()
 
-  #rimraf = require "rimraf"
-  #rmdir = (dir)->
-  #  opts =
-  #    glob:false
-  #    emfileWait: 10
-  #  new Promise (resolve, reject) ->
-  #    rimraf dir, opts, (err)->
-  #      if err?
-  #        reject err
-  #      else
-  #        resolve()
   writeFile = Promise.promisify fs.writeFile
   readFile = Promise.promisify fs.readFile
   Utils = require "../src/util"
@@ -53,8 +42,14 @@ describe "The Service", ->
 
   server = undefined
   settings = loadYaml path.resolve __dirname, "../settings.yaml"
-  settings.port = 9988
-
+  settings = merge settings,
+    port: 9988
+    minify:
+      client:false
+      vendor:false
+    sourceMaps:
+      client:false
+      vendor:false
   base = "http://localhost:#{settings.port}"
   
   profiler = require "v8-profiler"

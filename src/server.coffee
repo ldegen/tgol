@@ -7,7 +7,7 @@ module.exports = (CGOL_HOME, settings)->
 
   server = undefined
 
-  service = Service CGOL_HOME
+  service = Service CGOL_HOME, settings
   startServer = ()->
     new Promise (resolve,reject)->
       try

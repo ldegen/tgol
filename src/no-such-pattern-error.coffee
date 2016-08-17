@@ -1,3 +1,3 @@
-module.exports = class NoSuchPatternError extends Error
+module.exports = class NoSuchPatternError extends require "./domain-error"
   constructor: ()->
-    super("No such Pattern")
+    super(404,"No such Pattern")

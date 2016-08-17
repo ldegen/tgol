@@ -1,6 +1,10 @@
 describe "The Validator", ->
+  NoSuchPatternError = require "../src/no-such-pattern-error"
+  PatternTooLongError = require "../src/pattern-too-long-error"
+  PatternAlreadyRegisteredError = require "../src/pattern-already-registered-error"
+  EmailAlreadyRegisteredError = require "../src/email-already-registered-error"
   Validator = require "../src/validator"
-  validator = undefined
+  validate = undefined
   Utils = require "../src/util"
   builder = require("../src/builder")() 
   CGOL_HOME = undefined
@@ -10,23 +14,25 @@ describe "The Validator", ->
   Promise = require "bluebird"
   mkdir = Promise.promisify require "mkdirp"
   rmdir = Promise.promisify require "rimraf"
+  merge = require "deepmerge"
   Pattern = require "../src/pattern"
 
   beforeEach ->
     CGOL_HOME = tmpFileName @test
     mkdir CGOL_HOME
       .then ->
-        validator = Validator(CGOL_HOME)
         tdoc = builder.tournament
           name: 'TestTournament'
         repo = Repository CGOL_HOME
         repo.saveTournament(tdoc)
+      .then ->
+        validate = Validator(repo, 'TestTournament')
 
   afterEach ->
     rmdir CGOL_HOME
 
 
-  it "will return false for patterns having more than 150 cells", ->
+  it "will reject patterns having more than 150 cells", ->
     pdoc=
       name: "MyPattern"
       author: "John Doe"
@@ -39,23 +45,23 @@ describe "The Validator", ->
       for j in [0...3]
         cells.push([i,j])
     pdoc.base64String = Utils.encodeCoordinatesSync(cells)
-    result = validator.validatePattern(pdoc)
-    expect(result).to.be.false
+    expect(validate(pdoc)).to.be.rejectedWith(PatternTooLongError)
 
 
-  it "will throw an error if the author's mail adress is already in use for a pattern", ->
+  it "will reject pattern if the author's mail adress is already in use", ->
     pdoc=
       name: "MyPattern"
       author: "John Doe"
       mail:"john@tarent.de"
       elo:1000
-      base64String:""
+      base64String:'eJxjYGBkYGBkAiIAACMACA=='
       pin:"1234"
+    pdoc2 = merge pdoc, base64String: 'eJxjYGBkYGBkYmBmAAAAJQAI'
     expect(repo.savePattern(pdoc, tdoc.name)).to.be.fulfilled.then ->
-      expect(validator.isMailAlreadyInUse(pdoc.mail, 'TestTournament')).to.be.rejectedWith('Mail already in use!')
+      expect(validate(pdoc2)).to.be.rejectedWith(EmailAlreadyRegisteredError)
 
 
-  it "returns true if the normalized pattern has already been uploaded", ->
+  it "will reject the pattern if it is already registered", ->
     pattern = new Pattern [1,5,7,8,12]
     pdoc=
       name: "MyPattern"
@@ -72,11 +78,10 @@ describe "The Validator", ->
       base64String:pattern.normalize().encodeSync()
       pin:"1234"
     expect(repo.savePattern(pdoc, tdoc.name)).to.be.fulfilled.then ->
-      expect(validator.isPatternAlreadyInUse(pdoc2, tdoc.name)).to.be.fulfilled.then (res)-> 
-        expect(res).to.be.true
+      expect(validate(pdoc2)).to.be.rejectedWith(PatternAlreadyRegisteredError) 
 
 
-  it "will only return true if the conditions are really met", ->
+  it "will accept patterns if they do not violate beforementioned criteria", ->
     pattern1 = new Pattern [1,5,7,8,12]
     pattern2 = new Pattern [1,3,7,8,12]
     pdoc=
@@ -94,5 +99,4 @@ describe "The Validator", ->
       base64String:pattern2.normalize().encodeSync()
       pin:"1234"
     expect(repo.savePattern(pdoc, tdoc.name)).to.be.fulfilled.then ->
-      expect(validator.isPatternAlreadyInUse(pdoc2, tdoc.name)).to.be.fulfilled.then (res)->
-        expect(res).to.be.false
+      expect(validate(pdoc2)).to.be.fulfilled

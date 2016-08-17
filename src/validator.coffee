@@ -1,34 +1,43 @@
-module.exports = (CGOL_HOME)->
+module.exports = (repo, tournamentName)->
   Pattern = require "./pattern"
   Promise = require "bluebird"
-  path = require "path"
-  fs = require "fs"
-  stat = Promise.promisify fs.stat
-  repo = require("./repository")(CGOL_HOME)
+  NoSuchPatternError = require "./no-such-pattern-error"
+  PatternTooLongError = require "./pattern-too-long-error"
+  PatternAlreadyRegisteredError = require "./pattern-already-registered-error"
+  EmailAlreadyRegisteredError = require "./email-already-registered-error"
+
+  expectError =(constructor,p)->
+      p.then(
+        -> throw new Error("expected promise to be rejected")
+        (e)->
+          if e instanceof constructor
+            return e
+          else
+            throw e
+      )
 
 
-  validatePattern = (pdoc)->
+  validPattern = (pdoc)->
     pattern = new Pattern(pdoc.base64String)
     if pattern.cells.length > 150
-      false
+      Promise.reject new PatternTooLongError()
     else
-     true
+      Promise.resolve()
 
 
-  isMailAlreadyInUse = (mail, tournamentName)->
-    file = path.join CGOL_HOME, tournamentName, "patterns", mail+'.yaml'
-    stat file
-      .then ((stats)-> throw new Error("Mail already in use!") if stats.isFile()), (e)-> true
+  mailUnique = (pdoc)->
+    expectError NoSuchPatternError, repo.getPatternByEmailForTournament pdoc.mail, tournamentName
+      .catch -> 
+        throw new EmailAlreadyRegisteredError()
     
 
-  isPatternAlreadyInUse = (pdoc, tournamentName)->
-    repo.getPatternByBase64ForTournament(pdoc.base64String, tournamentName)
-      .then (pattern)->
-        true
-      .catch (e)->
-        false
+  patternUnique = (pdoc)->
+    expectError NoSuchPatternError, repo.getPatternByBase64ForTournament pdoc.base64String, tournamentName
+      .catch -> 
+        throw new PatternAlreadyRegisteredError()
 
 
-  validatePattern:validatePattern
-  isMailAlreadyInUse:isMailAlreadyInUse
-  isPatternAlreadyInUse:isPatternAlreadyInUse
+  (pdoc)->
+    validPattern pdoc
+      .then -> patternUnique pdoc
+      .then -> mailUnique pdoc
