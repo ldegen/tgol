@@ -167,9 +167,6 @@ describe "The Repository",->
        ]
 
 
- 
-
-
   it "can get an array of player information for the leaderboard", ->
     tdoc = b.tournament()
     tdir = path.join CGOL_HOME, tdoc.name

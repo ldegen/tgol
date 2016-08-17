@@ -42,7 +42,7 @@ describe "The Validator", ->
     expect(result).to.be.false
 
 
-  it "will return false if the author's mail adress is already in use for a pattern", ->
+  it "will throw an error if the author's mail adress is already in use for a pattern", ->
     pdoc=
       name: "MyPattern"
       author: "John Doe"
@@ -51,5 +51,4 @@ describe "The Validator", ->
       base64String:""
       pin:"1234"
     expect(repo.savePattern(pdoc, tdoc.name)).to.be.fulfilled.then ->
-      validator.isMailAlreadyInUse(pdoc.mail, 'TestTournament').to.be.fulfilled.then (res)->
-        expect(res).to.be.true
+      expect(validator.isMailAlreadyInUse(pdoc.mail, 'TestTournament')).to.be.rejectedWith('Mail already in use!')

@@ -138,8 +138,8 @@ module.exports = (CGOL_HOME, settings)->
         data
 
 
-  getScores = ->
-    mdir = path.join CGOL_HOME, 'froscon2016', 'matches'
+  getScores = (tournamentName)->
+    mdir = path.join CGOL_HOME, tournamentName, 'matches'
     readdir root:mdir, depth:0, entryType:'files' 
       .then (scores)->
         data= [
