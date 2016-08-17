@@ -1,5 +1,6 @@
 React = require "react"
 qr = require "qr-image"
+merge = require "deepmerge"
 Pattern = require "../pattern"
 {label, h1,h2,ul,li,p,div,factory,input, button, span, img} = require "../react-utils"
 Promise = require "bluebird"
@@ -15,17 +16,13 @@ module.exports = class PatternDetail extends React.Component
       author:""
       mail:""
       pin:""
-      elo:""
+      agree:false
       status: "loading"
 
   componentWillReceiveProps: (newProps)->
-    @fetchPatternInfo(newProps.params.spec) if newProps.params.spec != @props.params.spec
-  componentDidMount: -> @fetchPatternInfo(@props.params.spec)
-  fetchPatternInfo: (spec)->
-    request "#{location.origin}/api/froscon2016/patterns/#{encodeURIComponent spec}"
-      .then (resp)=>
-        console.log "resp", resp
-        @handleServerResponse resp
+    @reset newProps.params.spec if newProps.params.spec != @props.params.spec
+  componentDidMount: ->
+    @reset @props.params.spec
 
   handleUserInput: (name)->(ev)=>
     @setState "#{name}": ev.target.value
@@ -36,18 +33,21 @@ module.exports = class PatternDetail extends React.Component
   handleNavEvent: (name)->(ev)=>
     @transition(name,ev)
 
+  reset: (data)->
+    @setState status:"loading", =>@steps.loading.enter.call this, data
+
   transition: (event, data)->
     sourceState = @steps[@state.status]
     result = sourceState[event]?.call(this,data) ? @state.status
     if typeof result == "string"
       result = status: result
     targetName = result.status
-    console.log "transition", @state.status, event, targetName 
+    console.log "transition", @state.status, event, targetName
     targetState = @steps[targetName]
-    targetState.enter?(data)
-    @setState result
+    @setState result , ->
+      targetState.enter?.call this,data
 
-
+  valid: -> @steps[@state.status].valid.call this
   render: ->@steps[@state.status].render.call this
 
   labelValue: (label, value)->
@@ -76,12 +76,13 @@ module.exports = class PatternDetail extends React.Component
       name:name
       value: @state[name]
       onChange: @handleUserInput(name)
-  navButton: (name, label)->
-    button
+  navButton: (name, label, opts = {})->
+    opts = merge opts,
       value:"name"
       onClick: @handleNavEvent name
-      label
+    button opts, label
 
+  
 
   steps:
     error:
@@ -90,11 +91,20 @@ module.exports = class PatternDetail extends React.Component
           h1 ":-( Stop Dave, I'm afraid..."
         )
     qr:
+      back: -> "loading"
       render: ->
-        img
-          className: "qr-code"
-          src:"data:image/png;base64," + qr.imageSync( window.location.toString(), type:"png").toString("base64")
+        div(
+          img
+            className: "qr-code"
+            src:"data:image/png;base64," + qr.imageSync( window.location.toString(), type:"png").toString("base64")
+          @navButton "back", "Zurück"
+        )
     loading:
+      enter: (spec)->
+        if typeof spec != "string"
+          spec = @props.params.spec
+        request "#{location.origin}/api/froscon2016/patterns/#{encodeURIComponent spec}"
+          .then @handleServerResponse, @handleError
       response: (resp)->
         switch resp.statusCode
           when 404
@@ -116,6 +126,19 @@ module.exports = class PatternDetail extends React.Component
             window:pattern.bbox()
         )
     submitting:
+      enter: ->
+        request
+          url: "#{location.origin}/api/froscon2016/patterns"
+          method: "POST"
+          json:
+            allowOverride: @state.allowOverride
+            pdoc:
+              name: @state.name
+              author: @state.author
+              mail: @state.mail
+              base64String:@props.params.spec
+              pin: @state.pin
+         .then @handleServerResponse, @handleError
       response: (resp)->
         switch resp.statusCode
           when 400
@@ -142,6 +165,9 @@ module.exports = class PatternDetail extends React.Component
 
     unknown:
       submit: -> "submit"
+      qr: -> "qr"
+      valid: ->
+        @state.name.trim() and @state.author.trim()
       render: ->
         pattern = new Pattern @props.params.spec
 
@@ -154,13 +180,15 @@ module.exports = class PatternDetail extends React.Component
           div
             className: "field-group"
             @textInput "name", "Name"
-            @textInput "author", "Author"
+            @textInput "author", "Autor"
             @labelValue "Status:", @state.status
             @labelValue "Cells:", pattern.cells.length
             @labelValue "Dimensions:", pattern.bbox().width()+" x "+pattern.bbox().height()
-            @navButton "submit", "Submit for Tournament"
+            @navButton "submit", "Am Tournier anmelden", disabled: not @valid()
+            @navButton "qr", "QR-Code anzeigen"
         )
     known:
+      qr: -> "qr"
       render: ->
         pattern = new Pattern @props.params.spec
 
@@ -175,33 +203,51 @@ module.exports = class PatternDetail extends React.Component
             className: "field-group"
             @labelValue "Cells:", pattern.cells.length
             @labelValue "Dimensions:", pattern.bbox().width()+" x "+pattern.bbox().height()
+            @navButton "qr", "QR-Code anzeigen"
         )
     confirmOverwrite:
+      submit: ()->
+        # this will cause a re-submit but with the override flag set.
+        status: "submitting"
+        allowOverride: true
+      abort: -> "submit"
       render: ->
         div(
           h1 "Confirm Overwrite"
+          p """
+            Du hast bereits ein Muster mit dieser Email-Adresse verknüpft.
+            Da immter nur ein Muster pro Email-Adresse gleichzeitig am
+            Wettbewerb teilnehmen kann, wird das vorherige Muster abgemeldet.
+            Dein Punktestand wird zurückgesetzt -- Du fängst also mit dem neuen
+            Muster wieder ganz von vorne an.
+            """
+          p """
+            Ist das ganz bestimmt das, was du willst?
+            """
+          @navButton "abort", "Nein, abbrechen!"
+          @navButton "submit", "Ja, überschreiben."
+          
         )
     badPIN:
+      back: -> "submit"
       render: ->
         div(
           h1 "Bad PIN"
+          @navButton "back", "zurück"
         )
     submit:
+      enter: ->
+        # *allways* reset the override flag so the user
+        # gets an extra chance to opt out of overwriting her pattern
+        @setState allowOverride:false
       submit: ()->
-        request
-          url: "#{location.origin}/api/froscon2016/patterns"
-          method: "POST"
-          json:pdoc:
-            name: @state.name
-            author: @state.author
-            mail: @state.mail
-            base64String:@props.params.spec
-            pin: @state.pin
-         .then @handleServerResponse, @handleError
          "submitting"
+      abort: -> "loading"
+      valid: ->
+        @state.mail.trim() and @state.pin.trim() and @state.agree
       render: ->
         div(
-          h1 "Please authenticate"
+          h1 "Wie erreichen wir Dich?"
           div
             className: "field-group"
             @textInput "mail", "Email"
@@ -223,5 +269,6 @@ module.exports = class PatternDetail extends React.Component
                  Das ist während der gesamten Laufzeit des Wettbewerbs möglich.
                  """
             @checkbox "agree", "Ich verstehe und bin einverstanden."
-            @navButton "submit", "Upload"
+            @navButton "abort", "Nein, lieber nicht."
+            @navButton "submit", "Tu es!", disabled: not @valid()
         )

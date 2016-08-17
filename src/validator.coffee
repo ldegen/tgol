@@ -35,9 +35,8 @@ module.exports = (repo, tournamentName)->
   checkOverwrite = (pdoc,allowOverwrite)->
     repo.getPatternByEmailForTournament pdoc.mail, tournamentName
       .then (existingDoc)->
-        if allowOverwrite
-          throw new BadPinError() if existingDoc.pin != pdoc.pin
-        else
+        throw new BadPinError() if existingDoc.pin != pdoc.pin
+        if not allowOverwrite
           throw new EmailAlreadyRegisteredError()
       .catch only NoSuchPatternError
     

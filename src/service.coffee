@@ -86,8 +86,9 @@ module.exports = (CGOL_HOME, settings)->
 
   service.post '/api/:tournament/patterns',jsonParser, (req, res, next)->
     pdoc = req.body.pdoc
+    allowOverride = req.body.allowOverride
     validate = Validator repo, req.params.tournament
-    validate pdoc
+    validate pdoc, allowOverride
       .then ->
         pdoc.base64String = new Pattern(pdoc.base64String).minimize().encodeSync()
         repo.savePattern(pdoc,req.params.tournament)
