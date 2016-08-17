@@ -24,8 +24,11 @@ module.exports = (CGOL_HOME)->
   isPatternAlreadyInUse = (pdoc, tournamentName)->
     repo.getPatternByBase64ForTournament(pdoc.base64String, tournamentName)
       .then (pattern)->
-        throw new Error('Pattern is already in use!')
-        
+        true
+      .catch (e)->
+        false
+
+
   validatePattern:validatePattern
   isMailAlreadyInUse:isMailAlreadyInUse
   isPatternAlreadyInUse:isPatternAlreadyInUse

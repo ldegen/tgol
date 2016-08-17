@@ -55,7 +55,7 @@ describe "The Validator", ->
       expect(validator.isMailAlreadyInUse(pdoc.mail, 'TestTournament')).to.be.rejectedWith('Mail already in use!')
 
 
-  it "throws an error if the normalized pattern has already been uploaded", ->
+  it "returns true if the normalized pattern has already been uploaded", ->
     pattern = new Pattern [1,5,7,8,12]
     pdoc=
       name: "MyPattern"
@@ -72,10 +72,11 @@ describe "The Validator", ->
       base64String:pattern.normalize().encodeSync()
       pin:"1234"
     expect(repo.savePattern(pdoc, tdoc.name)).to.be.fulfilled.then ->
-      expect(validator.isPatternAlreadyInUse(pdoc2, tdoc.name)).to.be.rejectedWith('Pattern is already in use!')
+      expect(validator.isPatternAlreadyInUse(pdoc2, tdoc.name)).to.be.fulfilled.then (res)-> 
+        expect(res).to.be.true
 
 
-  it "will only throw the pattern error if the conditions are really met", ->
+  it "will only return true if the conditions are really met", ->
     pattern1 = new Pattern [1,5,7,8,12]
     pattern2 = new Pattern [1,3,7,8,12]
     pdoc=
@@ -93,4 +94,5 @@ describe "The Validator", ->
       base64String:pattern2.normalize().encodeSync()
       pin:"1234"
     expect(repo.savePattern(pdoc, tdoc.name)).to.be.fulfilled.then ->
-      expect(validator.isPatternAlreadyInUse(pdoc2, tdoc.name)).to.not.be.rejectedWith('Pattern is already in use!')
+      expect(validator.isPatternAlreadyInUse(pdoc2, tdoc.name)).to.be.fulfilled.then (res)->
+        expect(res).to.be.false

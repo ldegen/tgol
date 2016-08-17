@@ -86,18 +86,24 @@ module.exports = (CGOL_HOME, settings)->
       validator.isMailAlreadyInUse(pdoc.mail, req.params.tournament)
       pattern = new Pattern(pdoc.base64String)
       pdoc.base64String = pattern.normalize().encodeSync()
-      #validate normalized base64String, throw error if already in use
-      repo
-        .savePattern(pdoc,req.params.tournament)
-        .then ->
-          res.statusCode = 200
-          res.sendFile path.resolve __dirname, '..', 'static', 'index.html'
-        .then null, (e)->
-          res.statusCode = 901 #FIXME: what does 901 mean?
-          res.sendFile path.resolve __dirname, '..', 'static', 'error.html'
-        .catch next
+      validator.isPatternAlreadyInUse(pdoc, req.params.tournament)
+        .then (usage)->
+          if not usage
+            repo
+              .savePattern(pdoc,req.params.tournament)
+              .then ->
+                res.statusCode = 200
+                res.sendFile path.resolve __dirname, '..', 'static', 'index.html'
+              .then null, (e)->
+                res.statusCode = 901 #FIXME: what does 901 mean?
+                res.sendFile path.resolve __dirname, '..', 'static', 'error.html'
+              .catch next
+          else
+            res.status(401).sendFile path.resolve __dirname, '..', 'static', 'error.html'
+        .catch (e)->
+          res.status(402).sendFile path.resolve __dirname, '..', 'static', 'error.html'
     else
-      res.sendFile path.resolve __dirname, '..', 'static', 'error.html'
+      res.status(403).sendFile path.resolve __dirname, '..', 'static', 'error.html'
 
 
   service.post '/api/:tournamentName/matches', jsonParser, (req, res,next)->
