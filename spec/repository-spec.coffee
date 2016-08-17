@@ -201,3 +201,19 @@ describe "The Repository",->
           expect(data.patterns[0]).to.have.a.property('name').which.is.eql 'p1'
           expect(data.matches[0]).to.have.a.property('id').which.is.eql 'm1'
         ]
+
+
+  it "can get an array of all persited matches for a tournament", ->
+    tdoc = b.tournament
+      name:'TestTournament'
+      matches:[
+        'm1'
+        'm2'
+        'm3'
+      ]
+    expect(repository.saveTournament(tdoc)).to.be.fulfilled.then ->
+      expect(repository.getMatchesForTournament(tdoc.name)).to.be.fulfilled.then (matches)->
+        Promise.all([
+          expect(matches).to.be.an('array')
+          expect(matches).to.be.lengthOf 3
+        ])

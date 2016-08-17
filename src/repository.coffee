@@ -116,6 +116,12 @@ module.exports = (CGOL_HOME, settings)->
         patterns: (pattern for _,pattern of tournament.patterns)
         matches: (match for _,match of tournament.matches)
 
+
+  getMatchesForTournament = (tournamentName)->
+    cachedTournament tournamentName
+      .then (tournament)->
+        match for match of tournament.matches
+
   loadTournament = (tournamentName) ->
     pdir = path.join CGOL_HOME, tournamentName, 'patterns'
     mdir = path.join CGOL_HOME, tournamentName, 'matches'
@@ -162,4 +168,5 @@ module.exports = (CGOL_HOME, settings)->
   getPatternsForTournament:getPatternsForTournament
   getPatternByBase64ForTournament:getPatternByBase64ForTournament
   getPatternsAndMatchesForTournament:getPatternsAndMatchesForTournament
+  getMatchesForTournament:getMatchesForTournament
   getScores:getScores

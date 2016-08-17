@@ -118,8 +118,10 @@ module.exports = (CGOL_HOME, settings)->
     repo
       .getPatternsForTournament(req.params.tournamentName)
       .then (patterns)->
-        pair = matchmaker.matchForElo(patterns)
-        res.status(200).json pair
+        repo.getMatchesForTournament(req.params.tournamentName)
+          .then (matches)->
+            pair = matchmaker.matchForElo(patterns, matches)
+            res.status(200).json pair
       .catch next
 
   service.get '/api/:tournamentName', (req, res, next)->
@@ -135,7 +137,7 @@ module.exports = (CGOL_HOME, settings)->
     res.sendFile path.resolve __dirname, '..', 'static', 'leaderboard.html'
 
 
-  service.get '/landingpage.html', (req, res)->
+  service.get '/landingpage', (req, res)->
     res.sendFile path.resolve __dirname, '..', 'static', 'landingpage.html'
 
   # for everything else, just return index.html
