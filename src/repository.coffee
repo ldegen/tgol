@@ -120,7 +120,7 @@ module.exports = (CGOL_HOME, settings)->
   getMatchesForTournament = (tournamentName)->
     cachedTournament tournamentName
       .then (tournament)->
-        match for match of tournament.matches
+        match for _,match of tournament.matches
 
   loadTournament = (tournamentName) ->
     pdir = path.join CGOL_HOME, tournamentName, 'patterns'
