@@ -10,6 +10,7 @@ describe "The Validator", ->
   Promise = require "bluebird"
   mkdir = Promise.promisify require "mkdirp"
   rmdir = Promise.promisify require "rimraf"
+  Pattern = require "../src/pattern"
 
   beforeEach ->
     CGOL_HOME = tmpFileName @test
@@ -52,3 +53,44 @@ describe "The Validator", ->
       pin:"1234"
     expect(repo.savePattern(pdoc, tdoc.name)).to.be.fulfilled.then ->
       expect(validator.isMailAlreadyInUse(pdoc.mail, 'TestTournament')).to.be.rejectedWith('Mail already in use!')
+
+
+  it "throws an error if the normalized pattern has already been uploaded", ->
+    pattern = new Pattern [1,5,7,8,12]
+    pdoc=
+      name: "MyPattern"
+      author: "John Doe"
+      mail:"john@tarent.de"
+      elo:1000
+      base64String:pattern.normalize().encodeSync()
+      pin:"1234"
+    pdoc2=
+      name: "MyPattern2"
+      author: "Jane Doe"
+      mail:"jane@tarent.de" 
+      elo:1000
+      base64String:pattern.normalize().encodeSync()
+      pin:"1234"
+    expect(repo.savePattern(pdoc, tdoc.name)).to.be.fulfilled.then ->
+      expect(validator.isPatternAlreadyInUse(pdoc2, tdoc.name)).to.be.rejectedWith('Pattern is already in use!')
+
+
+  it "will only throw the pattern error if the conditions are really met", ->
+    pattern1 = new Pattern [1,5,7,8,12]
+    pattern2 = new Pattern [1,3,7,8,12]
+    pdoc=
+      name: "MyPattern"
+      author: "John Doe"
+      mail:"john@tarent.de"
+      elo:1000
+      base64String:pattern1.normalize().encodeSync()
+      pin:"1234"
+    pdoc2=
+      name: "MyPattern2"
+      author: "Jane Doe"
+      mail:"jane@tarent.de" 
+      elo:1000
+      base64String:pattern2.normalize().encodeSync()
+      pin:"1234"
+    expect(repo.savePattern(pdoc, tdoc.name)).to.be.fulfilled.then ->
+      expect(validator.isPatternAlreadyInUse(pdoc2, tdoc.name)).to.not.be.rejectedWith('Pattern is already in use!')

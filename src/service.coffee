@@ -9,10 +9,11 @@ module.exports = (CGOL_HOME, settings)->
   jsonParser = bodyParser.json()
   Matchmaker = require './matchmaker'
   matchmaker = Matchmaker()
-  validator = require('./validator')()
+  validator = require('./validator')(CGOL_HOME)
   packageJson = require "../package.json"
   NoSuchPatternError = require "./no-such-pattern-error"
   service = Express()
+  Pattern = require "./pattern"
 
   # client code
   browserify.settings 'extensions', ['.coffee']
@@ -81,15 +82,22 @@ module.exports = (CGOL_HOME, settings)->
 
   service.post '/api/:tournament/patterns',jsonParser, (req, res, next)->
     pdoc = req.body.pdoc
-    repo
-      .savePattern(pdoc,req.params.tournament)
-      .then ->
-        res.statusCode = 200
-        res.sendFile path.resolve __dirname, '..', 'static', 'index.html'
-      .then null, (e)->
-        res.statusCode = 901 #FIXME: what does 901 mean?
-        res.sendFile path.resolve __dirname, '..', 'static', 'error.html'
-      .catch next
+    if validator.validatePattern(pdoc)
+      validator.isMailAlreadyInUse(pdoc.mail, req.params.tournament)
+      pattern = new Pattern(pdoc.base64String)
+      pdoc.base64String = pattern.normalize().encodeSync()
+      #validate normalized base64String, throw error if already in use
+      repo
+        .savePattern(pdoc,req.params.tournament)
+        .then ->
+          res.statusCode = 200
+          res.sendFile path.resolve __dirname, '..', 'static', 'index.html'
+        .then null, (e)->
+          res.statusCode = 901 #FIXME: what does 901 mean?
+          res.sendFile path.resolve __dirname, '..', 'static', 'error.html'
+        .catch next
+    else
+      res.sendFile path.resolve __dirname, '..', 'static', 'error.html'
 
 
   service.post '/api/:tournamentName/matches', jsonParser, (req, res,next)->

@@ -3,6 +3,7 @@ describe "The Service", ->
   Promise = require "bluebird"
   Builder = require "../src/builder"
   Repository = require "../src/repository"
+  Pattern = require "../src/pattern"
 
   path = require "path"
   fs = require "fs"
@@ -146,12 +147,13 @@ describe "The Service", ->
 
 
   it "can persist an uploaded pattern", ->
+    p = new Pattern [1,5,7,8,12]
     pdoc=
       name:'MyPattern'
       author:'Joanne Doe'
       mail:'uploaded@tarent.de'
       elo:1000
-      base64String:'asfkjsdffjc'
+      base64String:p.encodeSync()
       pin:'12345'
     auth =
       url:base+'/api/TestTournament/patterns'
@@ -162,7 +164,7 @@ describe "The Service", ->
           author:'Joanne Doe'
           mail:'uploaded@tarent.de'
           elo:1000
-          base64String:'asfkjsdffjc'
+          base64String:p.encodeSync()
           pin:'12345'
     expect(request auth).to.be.fulfilled.then (resp)->
       expect(resp.statusCode).to.eql 200
