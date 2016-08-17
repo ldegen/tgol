@@ -65,8 +65,12 @@ module.exports = (CGOL_HOME, settings)->
       .catch next
 
   service.get '/api/:tournament/patterns/:base64String', (req, res, next)->
+    data = new Pattern req.params.base64String
+      .minimize()
+      .encodeSync()
+
     repo
-      .getPatternByBase64ForTournament(req.params.base64String, req.params.tournament)
+      .getPatternByBase64ForTournament(data, req.params.tournament)
       .then(
         (pdoc)->
           res.statusCode = 200
@@ -85,7 +89,7 @@ module.exports = (CGOL_HOME, settings)->
     if validator.validatePattern(pdoc)
       validator.isMailAlreadyInUse(pdoc.mail, req.params.tournament)
       pattern = new Pattern(pdoc.base64String)
-      pdoc.base64String = pattern.normalize().encodeSync()
+      pdoc.base64String = pattern.minimize().encodeSync()
       validator.isPatternAlreadyInUse(pdoc, req.params.tournament)
         .then (usage)->
           if not usage
@@ -93,7 +97,7 @@ module.exports = (CGOL_HOME, settings)->
               .savePattern(pdoc,req.params.tournament)
               .then ->
                 res.statusCode = 200
-                res.sendFile path.resolve __dirname, '..', 'static', 'index.html'
+                res.json pdoc
               .then null, (e)->
                 res.statusCode = 901 #FIXME: what does 901 mean?
                 res.sendFile path.resolve __dirname, '..', 'static', 'error.html'

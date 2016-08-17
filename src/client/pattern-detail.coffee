@@ -1,7 +1,7 @@
 React = require "react"
 qr = require "qr-image"
 Pattern = require "../pattern"
-{h1,h2,ul,li,p,div,factory,input, button, span, img} = require "../react-utils"
+{label, h1,h2,ul,li,p,div,factory,input, button, span, img} = require "../react-utils"
 Promise = require "bluebird"
 request = Promise.promisify require "request"
 
@@ -23,26 +23,13 @@ module.exports = class PatternDetail extends React.Component
   componentDidMount: -> @fetchPatternInfo(@props.params.spec)
   fetchPatternInfo: (spec)->
     request "#{location.origin}/api/froscon2016/patterns/#{encodeURIComponent spec}"
-      .then (resp)=> 
+      .then (resp)=>
         console.log "resp", resp
         @handleServerResponse resp
-  uploadPattern: ()=>
-    @setState status:"submitting"
-    request 
-      url: "#{location.origin}/api/froscon2016/patterns"
-      method: "POST"
-      json:pdoc:
-        name: @state.name
-        author: @state.author
-        mail: @state.mail
-        elo:1000
-        base64String:@props.params.spec
-        pin: @state.pin
-     .then @handleServerResponse, @handleError
 
   handleUserInput: (name)->(ev)=>
     @setState "#{name}": ev.target.value
-  
+
   handleServerResponse: (resp)=>
     @transition("response", resp)
 
@@ -55,8 +42,9 @@ module.exports = class PatternDetail extends React.Component
     if typeof result == "string"
       result = status: result
     targetName = result.status
+    console.log "transition", @state.status, event, targetName 
     targetState = @steps[targetName]
-    targetState.enter?(data) 
+    targetState.enter?(data)
     @setState result
 
 
@@ -71,13 +59,16 @@ module.exports = class PatternDetail extends React.Component
       span
         className: "value"
         value
-  checkbox: (name, label)=>
-    input
-      type:"checkbox"
-      name:name
-      value: @state[name]
-      onChange: @handleUserInput(name)
-      label
+  checkbox: (name, labelText)=>
+    div(
+      input
+        type:"checkbox"
+        name:name
+        id:name
+        value: @state[name]
+        onChange: @handleUserInput(name)
+      label htmlFor:name, labelText
+    )
   textInput: (name, label)=>
     input
       type:"text"
@@ -88,7 +79,7 @@ module.exports = class PatternDetail extends React.Component
   navButton: (name, label)->
     button
       value:"name"
-      onClick: @uploadPattern
+      onClick: @handleNavEvent name
       label
 
 
@@ -132,7 +123,7 @@ module.exports = class PatternDetail extends React.Component
           when 401
             "badPIN"
           when 200
-            body = JSON.parse resp.body
+            body = resp.body
             body.status = "known"
             body
           else
@@ -141,14 +132,12 @@ module.exports = class PatternDetail extends React.Component
         pattern = new Pattern @props.params.spec
 
         div(
-          h1 "Looking up Pattern..."
+          h1 "Uploading Pattern..."
 
-          Visualization
-            livingCells:pattern.cells
-            window:pattern.bbox()
         )
 
     unknown:
+      submit: -> "submit"
       render: ->
         pattern = new Pattern @props.params.spec
 
@@ -184,6 +173,18 @@ module.exports = class PatternDetail extends React.Component
             @labelValue "Dimensions:", pattern.bbox().width()+" x "+pattern.bbox().height()
         )
     submit:
+      submit: ()->
+        request
+          url: "#{location.origin}/api/froscon2016/patterns"
+          method: "POST"
+          json:pdoc:
+            name: @state.name
+            author: @state.author
+            mail: @state.mail
+            base64String:@props.params.spec
+            pin: @state.pin
+         .then @handleServerResponse, @handleError
+         "submitting"
       render: ->
         div(
           h1 "Please authenticate"
@@ -194,9 +195,9 @@ module.exports = class PatternDetail extends React.Component
             ul
               li """
                  Mit der Teilnahme am Wettbewerb bestätigst Du, dass
-                 wir dich unter dieser Adresse kontaktieren dürfen, z.B. um dich über Gewinne sowie das Endergebnis 
-                 des Wettbewerbs zu benachrichtigen. Wir verwenden diese Adresse 
-                 ausschließlich im Rahmen dieses Wettbewerbs und geben Sie nicht an 
+                 wir dich unter dieser Adresse kontaktieren dürfen, z.B. um dich über Gewinne sowie das Endergebnis
+                 des Wettbewerbs zu benachrichtigen. Wir verwenden diese Adresse
+                 ausschließlich im Rahmen dieses Wettbewerbs und geben Sie nicht an
                  Dritte weiter.
                  """
               li """
@@ -207,9 +208,6 @@ module.exports = class PatternDetail extends React.Component
                  Du musst die selbe PIN angeben, wenn du später das mit der Emailadresse verknüpfte Muster ersetzen möchtest.
                  Das ist während der gesamten Laufzeit des Wettbewerbs möglich.
                  """
-            @checkBox "Ich verstehe und bin einverstanden."
-            button
-              value:"Upload"
-              onClick: @uploadPattern
-              "Upload"
+            @checkbox "agree", "Ich verstehe und bin einverstanden."
+            @navButton "submit", "Upload"
         )

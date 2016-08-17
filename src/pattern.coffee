@@ -8,7 +8,9 @@ Util = require "./util"
 class Pattern
   constructor: (input, bbox)->
     throw new Error "you forgot to use 'new', doh!" if not (this instanceof Pattern)
-    @cells = Util.cells input
+    
+    @cells = Util.cells(input)
+    
     if bbox?
       @_bbox= if bbox instanceof BBox then bbox else new BBox bbox
 
@@ -68,7 +70,7 @@ class Pattern
   minimize: ->
     min = null
     min = a for a in @similarPatterns() when not min? or (a.compareTo(min) < 0)
-
+    min = new Pattern min.codes().sort()
     min
   clip: (spec)->
     box = new BBox spec

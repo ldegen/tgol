@@ -17,7 +17,7 @@ body * {
   font-family: "Lucida Grande", helvetica, sans-serif;
 }
 
-input, textarea, select,button {
+input[type=text], textarea, select,button {
   border: pink 1px solid;
   padding: 0.5em;
   font-size: 15px;
