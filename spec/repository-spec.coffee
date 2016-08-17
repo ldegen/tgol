@@ -166,6 +166,36 @@ describe "The Repository",->
          expect(repository.getPatternByBase64ForTournament('abcetasd==', tdoc.name)).to.be.rejectedWith(NoSuchPatternError)
        ]
 
+  it "can load a single pattern document by its author's email address", ->
+    tdoc = b.tournament()
+    tdir = path.join CGOL_HOME, tdoc.name
+    mkdir tdir
+    pdir = path.join tdir, 'patterns'
+    mkdir pdir
+    pdoc1 = b.pattern
+      name:"TestPattern1"
+      author:"Mocha"
+      mail:"repo-spec1@tarent.de"
+      elo:1000
+      base64String:"abcdefg=="
+      pin:"12345"
+    pdoc2 = b.pattern
+      name:"TestPattern2"
+      author:"Chai"
+      mail:"repo-spec2@tarent.de"
+      elo:1000
+      base64String:"hjklmno=="
+      pin:"12345"
+    expect(
+      repository.savePattern(pdoc1, tdoc.name)
+        .then -> repository.savePattern(pdoc2, tdoc.name)
+    ).to.be.fulfilled.then ->
+       Promise.all [
+         expect(repository.getPatternByEmailForTournament(pdoc1.mail, tdoc.name)).to.eventually.eql pdoc1
+         expect(repository.getPatternByEmailForTournament(pdoc2.mail, tdoc.name)).to.eventually.eql pdoc2
+         expect(repository.getPatternByEmailForTournament('michnix@hastenich.de', tdoc.name)).to.be.rejectedWith(NoSuchPatternError)
+       ]
+
 
   it "can get an array of player information for the leaderboard", ->
     tdoc = b.tournament()

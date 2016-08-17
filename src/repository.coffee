@@ -103,6 +103,13 @@ module.exports = (CGOL_HOME, settings)->
         pattern for _,pattern of tournament.patterns
 
 
+  getPatternByEmailForTournament = (email, tournamentName)->
+    cachedTournament(tournamentName)
+      .then (tournament)->
+        pattern = tournament.patterns[email]
+        throw new NoSuchPatternError if not pattern?
+        pattern
+
   getPatternByBase64ForTournament = (base64String, tournamentName)->
     getPatternsForTournament(tournamentName)
       .then (patterns)->
@@ -167,6 +174,7 @@ module.exports = (CGOL_HOME, settings)->
   saveMatch:saveMatch
   getPatternsForTournament:getPatternsForTournament
   getPatternByBase64ForTournament:getPatternByBase64ForTournament
+  getPatternByEmailForTournament:getPatternByEmailForTournament
   getPatternsAndMatchesForTournament:getPatternsAndMatchesForTournament
   getMatchesForTournament:getMatchesForTournament
   getScores:getScores
