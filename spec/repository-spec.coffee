@@ -3,6 +3,7 @@ describe "The Repository",->
   Builder = require "../src/builder"
   Repository = require "../src/repository"
   Promise = require "bluebird"
+  NoSuchPatternError = require "../src/no-such-pattern-error"
   path = require "path"
   fs = require "fs"
   mkdir = Promise.promisify require "mkdirp"
@@ -48,6 +49,7 @@ describe "The Repository",->
         expect(loadYaml metafile).to.eql
           name:tdoc.name
           pin:tdoc.pin
+
         expect(loadYaml path.join patterndir, pdoc.mail+".yaml").to.eql pdoc for pdoc in tdoc.patterns
         expect(loadYaml path.join matchdir, mdoc.id+".yaml").to.eql mdoc for mdoc in tdoc.matches
       ]
@@ -161,8 +163,11 @@ describe "The Repository",->
        Promise.all [
          expect(repository.getPatternByBase64ForTournament(pdoc1.base64String, tdoc.name)).to.eventually.eql pdoc1
          expect(repository.getPatternByBase64ForTournament(pdoc2.base64String, tdoc.name)).to.eventually.eql pdoc2
-         expect(repository.getPatternByBase64ForTournament('abcetasd==', tdoc.name)).to.eventually.be.undefined
+         expect(repository.getPatternByBase64ForTournament('abcetasd==', tdoc.name)).to.be.rejectedWith(NoSuchPatternError)
        ]
+
+
+ 
 
 
   it "can get an array of player information for the leaderboard", ->
@@ -182,8 +187,8 @@ describe "The Repository",->
     tdoc = b.tournament
       name:'TestTournament'
       patterns:[
-        {name:'p1'}
-        {name:'p2'}
+        {name:'p1', mail:'m1'}
+        {name:'p2', mail:'m2'}
       ]
       matches:[
         {id:'m1'}

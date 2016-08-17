@@ -7,10 +7,11 @@ module.exports = (CGOL_HOME, settings)->
 
   server = undefined
 
+  service = Service CGOL_HOME
   startServer = ()->
     new Promise (resolve,reject)->
       try
-        server = http.createServer Service CGOL_HOME, settings
+        server = http.createServer service, settings
         server.listen settings.port, settings.host, resolve
       catch e
         reject e
@@ -21,6 +22,10 @@ module.exports = (CGOL_HOME, settings)->
         server.close resolve
       catch e
         reject e
+
+  reload = (path)->
+    service.switchWorkspace path
   start: startServer
   stop: stopServer
+  switchWorkspace: reload
 
