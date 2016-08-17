@@ -137,15 +137,10 @@ module.exports = (CGOL_HOME, settings)->
       .then -> 
         data
 
-<<<<<<< HEAD
+
   getScores = ->
     mdir = path.join CGOL_HOME, 'froscon2016', 'matches'
     readdir root:mdir, depth:0, entryType:'files' 
-=======
-  getScores = (tournamentName)->
-    mdir = path.join CGOL_HOME, tournamentName, 'matches'
-    readdir root:mdir, depth:0, entryType:'files'
->>>>>>> a6f0bf1914ca07be008ad6ec70d2194a4682bcc4
       .then (scores)->
         data= [
           {name: 'Roman'
@@ -160,11 +155,6 @@ module.exports = (CGOL_HOME, settings)->
         data
 
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> a6f0bf1914ca07be008ad6ec70d2194a4682bcc4
   allTournaments: allTournaments
   saveTournament: saveTournament
   savePattern: savePattern
