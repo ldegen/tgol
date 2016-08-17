@@ -167,11 +167,10 @@ describe "The Service", ->
       expect(loadYaml pfile).to.eql pdoc
 
 
-  it "can request if a pattern has already been uploaded to a tournament and return an empty pattern if not", ->
+  it "can request if a pattern has already been uploaded to a tournament", ->
     expect(request(base+'/api/TestTournament/patterns/lkjtewqfsdufafazakjds==')).to.be.fulfilled.then (resp)->
       Promise.all [
         expect(resp.statusCode).to.eql 404
-        expect(resp.body).to.be.empty
       ]
 
 
