@@ -3,10 +3,11 @@ describe "The Validator", ->
   PatternTooLongError = require "../src/pattern-too-long-error"
   PatternAlreadyRegisteredError = require "../src/pattern-already-registered-error"
   EmailAlreadyRegisteredError = require "../src/email-already-registered-error"
+  BadPinError = require "../src/bad-pin-error"
   Validator = require "../src/validator"
   validate = undefined
   Utils = require "../src/util"
-  builder = require("../src/builder")() 
+  builder = require("../src/builder")()
   CGOL_HOME = undefined
   tdoc = undefined
   Repository = require "../src/repository"
@@ -48,7 +49,7 @@ describe "The Validator", ->
     expect(validate(pdoc)).to.be.rejectedWith(PatternTooLongError)
 
 
-  it "will reject pattern if the author's mail adress is already in use", ->
+  it "will reject a pattern with an existing email if the overwrite-Flag is not set", ->
     pdoc=
       name: "MyPattern"
       author: "John Doe"
@@ -59,6 +60,34 @@ describe "The Validator", ->
     pdoc2 = merge pdoc, base64String: 'eJxjYGBkYGBkYmBmAAAAJQAI'
     expect(repo.savePattern(pdoc, tdoc.name)).to.be.fulfilled.then ->
       expect(validate(pdoc2)).to.be.rejectedWith(EmailAlreadyRegisteredError)
+
+  it "will accept a pattern with an existing email if the overwrite-Flag is set", ->
+    pdoc=
+      name: "MyPattern"
+      author: "John Doe"
+      mail:"john@tarent.de"
+      elo:1000
+      base64String:'eJxjYGBkYGBkAiIAACMACA=='
+      pin:"1234"
+    pdoc2 = merge pdoc,
+      base64String: 'eJxjYGBkYGBkYmBmAAAAJQAI'
+    expect(repo.savePattern(pdoc, tdoc.name)).to.be.fulfilled.then ->
+      expect(validate(pdoc2,true)).to.be.fulfilled
+
+  it "will reject a pattern with an existing email if the PINs do not match", ->
+    pdoc=
+      name: "MyPattern"
+      author: "John Doe"
+      mail:"john@tarent.de"
+      elo:1000
+      base64String:'eJxjYGBkYGBkAiIAACMACA=='
+      pin:"1234"
+    pdoc2 = merge pdoc,
+      base64String: 'eJxjYGBkYGBkYmBmAAAAJQAI'
+      pin:"1245"
+
+    expect(repo.savePattern(pdoc, tdoc.name)).to.be.fulfilled.then ->
+      expect(validate(pdoc2,true)).to.be.rejectedWith(BadPinError)
 
 
   it "will reject the pattern if it is already registered", ->
@@ -73,12 +102,12 @@ describe "The Validator", ->
     pdoc2=
       name: "MyPattern2"
       author: "Jane Doe"
-      mail:"jane@tarent.de" 
+      mail:"jane@tarent.de"
       elo:1000
       base64String:pattern.normalize().encodeSync()
       pin:"1234"
     expect(repo.savePattern(pdoc, tdoc.name)).to.be.fulfilled.then ->
-      expect(validate(pdoc2)).to.be.rejectedWith(PatternAlreadyRegisteredError) 
+      expect(validate(pdoc2)).to.be.rejectedWith(PatternAlreadyRegisteredError)
 
 
   it "will accept patterns if they do not violate beforementioned criteria", ->
@@ -94,7 +123,7 @@ describe "The Validator", ->
     pdoc2=
       name: "MyPattern2"
       author: "Jane Doe"
-      mail:"jane@tarent.de" 
+      mail:"jane@tarent.de"
       elo:1000
       base64String:pattern2.normalize().encodeSync()
       pin:"1234"

@@ -119,7 +119,11 @@ module.exports = class PatternDetail extends React.Component
       response: (resp)->
         switch resp.statusCode
           when 400
-            "confirmOverwrite"
+            switch resp.body.type
+              when "EmailAlreadyRegisteredError"
+                "confirmOverwrite"
+              else
+                "error"
           when 401
             "badPIN"
           when 200
@@ -171,6 +175,16 @@ module.exports = class PatternDetail extends React.Component
             className: "field-group"
             @labelValue "Cells:", pattern.cells.length
             @labelValue "Dimensions:", pattern.bbox().width()+" x "+pattern.bbox().height()
+        )
+    confirmOverwrite:
+      render: ->
+        div(
+          h1 "Confirm Overwrite"
+        )
+    badPIN:
+      render: ->
+        div(
+          h1 "Bad PIN"
         )
     submit:
       submit: ()->

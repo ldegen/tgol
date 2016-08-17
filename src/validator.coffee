@@ -5,17 +5,16 @@ module.exports = (repo, tournamentName)->
   PatternTooLongError = require "./pattern-too-long-error"
   PatternAlreadyRegisteredError = require "./pattern-already-registered-error"
   EmailAlreadyRegisteredError = require "./email-already-registered-error"
+  BadPinError = require "./bad-pin-error"
 
-  expectError =(constructor,p)->
-      p.then(
-        -> throw new Error("expected promise to be rejected")
-        (e)->
-          if e instanceof constructor
-            return e
-          else
-            throw e
-      )
+  only =(Constructor)->
+    # catch Errors of given type, rethrow everything else
+    (e)-> 
+      throw e if not (e instanceof Constructor)
 
+  raise = (Constructor)->
+    -> 
+      throw new Constructor
 
   validPattern = (pdoc)->
     pattern = new Pattern(pdoc.base64String)
@@ -25,19 +24,26 @@ module.exports = (repo, tournamentName)->
       Promise.resolve()
 
 
-  mailUnique = (pdoc)->
-    expectError NoSuchPatternError, repo.getPatternByEmailForTournament pdoc.mail, tournamentName
-      .catch -> 
-        throw new EmailAlreadyRegisteredError()
     
 
   patternUnique = (pdoc)->
-    expectError NoSuchPatternError, repo.getPatternByBase64ForTournament pdoc.base64String, tournamentName
-      .catch -> 
-        throw new PatternAlreadyRegisteredError()
+    repo
+      .getPatternByBase64ForTournament pdoc.base64String, tournamentName
+      .then raise PatternAlreadyRegisteredError
+      .catch only NoSuchPatternError
 
+  checkOverwrite = (pdoc,allowOverwrite)->
+    repo.getPatternByEmailForTournament pdoc.mail, tournamentName
+      .then (existingDoc)->
+        if allowOverwrite
+          throw new BadPinError() if existingDoc.pin != pdoc.pin
+        else
+          throw new EmailAlreadyRegisteredError()
+      .catch only NoSuchPatternError
+    
+      
 
-  (pdoc)->
+  (pdoc, allowOverwrite)->
     validPattern pdoc
       .then -> patternUnique pdoc
-      .then -> mailUnique pdoc
+      .then -> checkOverwrite pdoc, allowOverwrite
