@@ -114,8 +114,8 @@ module.exports = (CGOL_HOME, settings)->
     ]).then ->
       data   
 
-  getScores = (tournamentName)->
-    mdir = path.join CGOL_HOME, tournamentName, 'matches'
+  getScores = ->
+    mdir = path.join CGOL_HOME, 'froscon2016', 'matches'
     readdir root:mdir, depth:0, entryType:'files' 
       .then (scores)->
         data= [
@@ -129,12 +129,6 @@ module.exports = (CGOL_HOME, settings)->
           mail: 'service-spec@tarent.de'}
         ]
         data
-
-
-  checkPatternIsUnique = (baseString,tournamentName)->
-    file = path.join CGOL_HOME, tournamentName, "patterns", baseString+'.yaml'
-    stat file
-      .then ((stats)-> throw new Error("Pattern already in use!") if stats.isFile()), (e)-> true
 
 
   allTournaments: allTournaments
