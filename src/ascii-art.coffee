@@ -7,7 +7,7 @@ module.exports =
       emptyChar:'_'
       extent:{}
     opts = merge defaults, opts0
-    {left,top,right,bottom} = merge new Bbox(cells), opts.extent
+    {left,top,right,bottom} = merge new Bbox(cells), opts.extent ? {}
     color = (x,y)->
       return c ? 0 for [a,b,c] in cells when a==x and b==y
     alive = (x,y)->

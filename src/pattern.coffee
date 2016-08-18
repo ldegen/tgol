@@ -29,6 +29,7 @@ class Pattern
 
   bbox: ->@_bbox?=new BBox @cells
   translate: (dx,dy)->
+    [dx,dy] = dx if isArray dx
     cells = ([x+dx,y+dy] for [x,y] in @cells)
     bbox = @_bbox?.translate(dx,dy)
     new Pattern cells, bbox

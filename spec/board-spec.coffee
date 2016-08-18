@@ -220,3 +220,29 @@ describe "The Board", ->
      _|_|_|_|_|
      _|_|_|_|_|
     """
+  
+  it "can initialized from a match document", ->
+    mdoc=
+      id: null
+      pattern1:
+        base64String: 'eJxjYGBkZGZgYgQAACQACQ=='
+        translation: [0,0]
+        variant: 0
+        score: null
+      pattern2:
+        base64String: 'eJxjYGBkYGBkYgAAABUABQ=='
+        translation: [9,-8]
+        variant: 1
+        score: null
+    expect(Board.fromMatch(mdoc).asciiArt()).to.eql """
+    _|_|_|_|_|_|_|_|_|o|_|_|
+    _|_|_|_|_|_|_|_|_|o|o|o|
+    _|_|_|_|_|_|_|_|_|_|_|_|
+    _|_|_|_|_|_|_|_|_|_|_|_|
+    _|_|_|_|_|_|_|_|_|_|_|_|
+    _|_|_|_|_|_|_|_|_|_|_|_|
+    _|_|_|_|_|_|_|_|_|_|_|_|
+    _|_|_|_|_|_|_|_|_|_|_|_|
+    *|_|_|*|_|_|_|_|_|_|_|_|
+    _|*|*|_|_|_|_|_|_|_|_|_|
+    """

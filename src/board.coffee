@@ -121,4 +121,18 @@ Board = (spec)->
   copy:copy
   cut:cut
 
+Board.fromMatch = (mdoc)->
+  board = Board([])
+  p1 = new Pattern mdoc.pattern1.base64String
+    .similarPatterns()[mdoc.pattern1.variant]
+    .translate mdoc.pattern1.translation
+  p2 = new Pattern mdoc.pattern2.base64String
+    .similarPatterns()[mdoc.pattern2.variant]
+    .translate mdoc.pattern2.translation
+
+  debugger
+  board.paste p1,0
+  board.paste p2,1
+  board
+
 module.exports= Board
