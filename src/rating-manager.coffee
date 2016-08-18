@@ -8,7 +8,6 @@ module.exports = (repo, tournamentName)->
   updateEloNumbers = (mdoc)->
     repo.getMatchesForTournament(tournamentName)
       .then (matches)->
-        calculateScores(matches)
         for match in matches
           if eloNumbers[match.pattern1.base64String] == undefined
             eloNumbers[match.pattern1.base64String] = 1000
@@ -29,6 +28,15 @@ module.exports = (repo, tournamentName)->
         console.log 'ELONUMBERS AFTER:', eloNumbers
 
 
+  getScore = (pdoc)->
+    repo.getMatchesForTournament(tournamentName)
+      .then (matches)->
+        calculateScores matches
+        if scores[pdoc.base64String] != undefined
+          return scores[pdoc.base64String]
+        else
+          return 0
+
   calculateScores = (matches)->
     for match in matches
         if scores[match.pattern1.base64String] == undefined 
@@ -46,3 +54,4 @@ module.exports = (repo, tournamentName)->
   updateEloNumbers:updateEloNumbers
   scores:scores
   eloNumbers:eloNumbers
+  getScore:getScore

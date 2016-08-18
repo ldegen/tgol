@@ -74,20 +74,20 @@ describe "The rating Manager",->
     .then ->
       repo = Repository CGOL_HOME
       repo.saveTournament(tdoc)
-        # .then -> manager = Rating(repo, 'TestTournament')
+        .then -> manager = Rating(repo, 'TestTournament')
 
   afterEach -> 
     rmdir CGOL_HOME
 
   it "can update the ELO ratings of patterns, if handed a match", ->
-    manager = Rating(repo, 'TestTournament')
     expect(manager.updateEloNumbers(mdoc)).to.be.fulfilled.then ->
       console.log 'AFTER THE FUNCTION'
       console.log manager
-      expect(manager.scores[pdoc.base64String]).to.eql 300
       expect(manager.eloNumbers[pdoc.base64String]).to.be.at.least 1003
 
-  
+  it "can return the current score for a pattern", ->
+    expect(manager.getScore(pdoc)).to.be.fulfilled.then (score)->
+      expect(score).to.eql 300
   # it "can update the ELO rating for a player, if given the opponent and the result of the match", ->
   #   ratingA = 1000
   #   ratingB = 1000
