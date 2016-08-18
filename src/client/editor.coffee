@@ -170,5 +170,16 @@ class Editor extends React.Component
         (Panel bus:@bus, commands: @bottomCommands())
       )
     )
+  componentDidMount: ->
+    console.log "mounted"
+    s = localStorage.getItem "tgol.editor.state"
+    if s?
+      console.log "loading", s
+      @setState JSON.parse s
+
+  componentWillUnmount: ->
+    s = JSON.stringify @state
+    console.log "saving", s
+    localStorage.setItem "tgol.editor.state", s
 
 module.exports = Editor

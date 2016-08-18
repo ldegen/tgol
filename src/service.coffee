@@ -36,6 +36,7 @@ module.exports = (CGOL_HOME, settings)->
     'react-router'
     'kbpgp'
     'bluebird'
+    'require'
   ]
   service.get '/js/vendor.js', browserify shared,
     debug:settings.sourceMaps.vendor
