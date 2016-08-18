@@ -59,8 +59,9 @@ module.exports = class PatternDetail extends React.Component
       span
         className: "value"
         value
-  checkbox: (name, labelText)=>
+  checkbox: (name, labelText,className)=>
     div(
+      className: className
       input
         type:"checkbox"
         name:name
@@ -172,6 +173,7 @@ module.exports = class PatternDetail extends React.Component
         pattern = new Pattern @props.params.spec
 
         div(
+          className: "form"
           h1 "(Yet) Unknown Pattern"
 
           Visualization
@@ -193,6 +195,7 @@ module.exports = class PatternDetail extends React.Component
         pattern = new Pattern @props.params.spec
 
         div(
+          className: "form"
           h1 "Pattern: #{@state.name}"
           h2 "by: #{@state.author}"
 
@@ -213,6 +216,7 @@ module.exports = class PatternDetail extends React.Component
       abort: -> "submit"
       render: ->
         div(
+          className: "form"
           h1 "Confirm Overwrite"
           p """
             Du hast bereits ein Muster mit dieser Email-Adresse verknüpft.
@@ -247,6 +251,7 @@ module.exports = class PatternDetail extends React.Component
         @state.mail.trim() and @state.pin.trim() and @state.agree
       render: ->
         div(
+          className: "form"
           h1 "Wie erreichen wir Dich?"
           div
             className: "field-group"
@@ -268,7 +273,7 @@ module.exports = class PatternDetail extends React.Component
                  Du musst die selbe PIN angeben, wenn du später das mit der Emailadresse verknüpfte Muster ersetzen möchtest.
                  Das ist während der gesamten Laufzeit des Wettbewerbs möglich.
                  """
-            @checkbox "agree", "Ich verstehe und bin einverstanden."
+            @checkbox "agree", "Ich verstehe und bin einverstanden.", "agree"
             @navButton "abort", "Nein, lieber nicht."
             @navButton "submit", "Tu es!", disabled: not @valid()
         )
