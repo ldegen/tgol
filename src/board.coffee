@@ -130,7 +130,6 @@ Board.fromMatch = (mdoc)->
     .similarPatterns()[mdoc.pattern2.variant]
     .translate mdoc.pattern2.translation
 
-  debugger
   board.paste p1,0
   board.paste p2,1
   board

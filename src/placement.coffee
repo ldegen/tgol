@@ -19,7 +19,7 @@ module.exports = (opts)->
   
 
   matchTemplate: (p0,q0)->
-    rnd =()->Math.floor(opts.random()*8)
+    rnd =()->Math.floor((opts.random ? Math.random)()*8)
     v1 = rnd()
     v2 = rnd()
     p = p0.similarPatterns()[v1]

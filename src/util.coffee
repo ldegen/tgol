@@ -25,7 +25,7 @@ module.exports=
         else if typeof input[0] == "number"
           input.map @cantorDecode
         else throw new Error "An array is ok, but it must contain coordinate pairs or Cantor Numbers"
-      else throw new Error "Bad input"
+      else throw new Error "Bad input: #{input}"
   encodeCoordinates: (cells)->
     coords = Array::concat.apply [], cells
     buf = new Buffer Uint8Array.from coords

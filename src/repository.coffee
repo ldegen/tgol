@@ -134,7 +134,6 @@ module.exports = (CGOL_HOME, settings)->
     data=
       patterns:{}
       matches:{}
-    debugger
     mkdir pdir
       .then -> mkdir mdir
       .then -> readdir root:pdir, depth:0, entryType:'files'
