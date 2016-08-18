@@ -1,23 +1,39 @@
 describe "The rating Manager",->
   Rating = require "../src/rating-manager"
   manager = undefined
-  CGOL_HOME = tmpFileName @test
-  repo = require("../src/repository")(CGOL_HOME)
+  CGOL_HOME = undefined
+  Repository = require("../src/repository")
+  repo = undefined
+  Promise = require "bluebird"
+  rmdir = Promise.promisify require "rimraf"
+  mkdir = Promise.promisify require "mkdirp"
   pdoc=
     name:'John Doe'
     mail:'john@tarent.de'
-    base64String:'kajfmckuwmzrxkaj'
+    base64String:'pattern1String'
     pin:'1234'
   pdoc2 = 
     name:'Jane Doe'
     mail:'jane@tarent.de'
-    base64String:'kajfmckuwadadfamzrxkaj'
+    base64String:'pattern2String'
     pin:'1234'
   pdoc3 = 
     name:'Jim Doe'
     mail:'jim@tarent.de'
-    base64String:'kasadfsdjfmckuwmzrxkaj'
+    base64String:'pattern3String'
     pin:'1234'
+  mdoc =
+    id:'3'
+    pattern1:
+      base64String:pdoc.base64String
+      translation:'0/0'
+      modulo:1
+      score:100
+    pattern2:
+      base64String:pdoc2.base64String
+      translation:'1/1'
+      modulo:5
+      score:50
   builder = require("../src/builder")(CGOL_HOME)
   tdoc = builder.tournament
     name:'TestTournament'
@@ -48,27 +64,28 @@ describe "The rating Manager",->
         base64String:pdoc3.base64String
         translation:'1/1'
         modulo:5
-        score:50}
-      {id:'3'
-      pattern1:
-        base64String:pdoc.base64String
-        translation:'0/0'
-        modulo:1
-        score:100
-      pattern2:
-        base64String:pdoc2.base64String
-        translation:'1/1'
-        modulo:5
-        score:50}
+        score:50},
+      mdoc
     ]
 
   beforeEach -> 
-    repo.saveTournament(tdoc)
-    manager = Rating(repo)
+    CGOL_HOME = tmpFileName @test
+    mkdir CGOL_HOME
+    .then ->
+      repo = Repository CGOL_HOME
+      repo.saveTournament(tdoc)
+        # .then -> manager = Rating(repo, 'TestTournament')
 
-  it "can calculate the rating for a pattern based on its history", ->
-    elo1 = manager.calculateEloForPattern(pdoc)
-    expect(elo1).to.be.at.least 103
+  afterEach -> 
+    rmdir CGOL_HOME
+
+  it "can update the ELO ratings of patterns, if handed a match", ->
+    manager = Rating(repo, 'TestTournament')
+    expect(manager.updateEloNumbers(mdoc)).to.be.fulfilled.then ->
+      console.log 'AFTER THE FUNCTION'
+      console.log manager
+      expect(manager.scores[pdoc.base64String]).to.eql 300
+      expect(manager.eloNumbers[pdoc.base64String]).to.be.at.least 1003
 
   
   # it "can update the ELO rating for a player, if given the opponent and the result of the match", ->

@@ -78,7 +78,6 @@ module.exports = (CGOL_HOME, settings)->
     metafile = path.join tdir, 'meta.yaml'
     matchdir = path.join tdir, 'matches'
     patterndir = path.join tdir, 'patterns'
-
     mkdir tdir
       .then -> mkdir matchdir
       .then -> mkdir patterndir
