@@ -42,7 +42,7 @@
     "browserify-middleware": "^7.0.0",
     "bulk-require": "^1.0.0",
     "coffeeify": "^2.0.1",
-    "d3-brush": "^1.0.1",
+    "d3-brush": "^1.0.2",
     "d3-drag": "^1.0.0",
     "d3-selection": "^1.0.0",
     "d3-zoom": "^1.0.2",
@@ -84,6 +84,7 @@
     "react-dom",
     "react-router",
     "readdirp",
+    "request",
     "rimraf"
   ]
 }

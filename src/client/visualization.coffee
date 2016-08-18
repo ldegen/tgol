@@ -19,6 +19,9 @@ class Visualiztation extends React.Component
     zoom = d3Zoom.zoom()
     drag = d3Drag.drag()
     brush = d3Brush.brush()
+
+    #workaround for https://github.com/d3/d3-brush/issues/13
+    brush.extent [[0,0],[9999,9999]]
     touchSupported = ->
       msTouchEnabled = window.navigator.msMaxTouchPoints
       generalTouchEnabled = 'ontouchstart' of document.createElement('div')
