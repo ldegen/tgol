@@ -28,12 +28,12 @@ module.exports=
       else throw new Error "Bad input"
   encodeCoordinates: (cells)->
     coords = Array::concat.apply [], cells
-    buf = Buffer.from Uint8Array.from coords
+    buf = new Buffer Uint8Array.from coords
     deflate buf
       .then (zbuf)->zbuf.toString "base64"
   encodeCoordinatesSync: (cells)->
     coords = Array::concat.apply [], cells
-    buf = Buffer.from Uint8Array.from coords
+    buf = new Buffer Uint8Array.from coords
     zbuf = zlib.deflateSync buf
     zbuf.toString "base64"
 
