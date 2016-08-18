@@ -1,6 +1,7 @@
 module.exports = ->
   WeightedRandom = require "./weighted-random"
 
+
   matchForElo = (patterns, matches)->
     i = 0
     while i < 10
@@ -32,4 +33,30 @@ module.exports = ->
         i++
     throw new Error('No matching pattern could be found :(')
 
-  matchForElo:matchForElo
+
+  matchForElo: (patterns,matches)->
+    patternLU = {}
+    counters = []
+    for pattern,i in patterns
+      patternLU[pattern.base64String] = i
+      counters[i]=0
+    
+    for match in matches
+      i = patternLU[match.pattern1.base64String]
+      j = patternLU[match.pattern2.base64String]
+      counters[i]++
+      counters[j]++
+
+    console.log "counters", counters
+    weights = counters.map (c)->1/(c+1)
+    console.log "weights", weights
+
+    rnd = WeightedRandom weights
+    i = rnd()
+    console.log "i",i
+    j=i
+    while weights.length > 1 and j==i
+      j= rnd()
+    console.log "j", j 
+
+    [patterns[i], patterns[j]]

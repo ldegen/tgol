@@ -1,5 +1,6 @@
 {render,factory, div} = require "../react-utils"
 Editor = require "./editor"
+Arena = require "./arena"
 App = require "./app"
 PatternDetail = require "./pattern-detail"
 ready = require "document-ready"
@@ -19,6 +20,9 @@ ready ->
     ,
       path:"patterns/:spec"
       component: PatternDetail
+    ,
+      path:"kiosk/arena"
+      component: Arena
     ]
   ]
   render(

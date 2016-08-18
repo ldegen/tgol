@@ -107,13 +107,13 @@ module.exports = (CGOL_HOME, settings)->
       .catch next
 
   service.get '/api/:tournamentName/matchmaker', (req, res, next)->
-    repo
-      .getPatternsForTournament(req.params.tournamentName)
-      .then (patterns)->
-        repo.getMatchesForTournament(req.params.tournamentName)
-          .then (matches)->
-            pair = matchmaker.matchForElo(patterns, matches)
-            res.status(200).json pair
+    Promise.all [
+      repo.getPatternsForTournament(req.params.tournamentName)
+      repo.getMatchesForTournament(req.params.tournamentName)
+    ]
+      .then ([patterns,matches])->
+        pair = matchmaker.matchForElo(patterns, matches)
+        res.status(200).json pair
       .catch next
 
   service.get '/api/:tournamentName', (req, res, next)->
