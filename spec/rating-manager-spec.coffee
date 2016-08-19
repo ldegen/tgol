@@ -81,25 +81,25 @@ describe "The rating Manager",->
     .then ->
       repo = Repository CGOL_HOME
       repo.saveTournament(tdoc)
-        .then -> manager = Rating(repo)
+        # .then -> manager = Rating(repo)
 
   afterEach -> 
     rmdir CGOL_HOME
 
   it "can update the ELO ratings of patterns, if handed a match", ->
-    expect(manager.updateEloNumbers(mdoc1, 'TestTournament')).to.be.fulfilled.then ->
-      expect(manager.updateEloNumbers(mdoc2, 'TestTournament')).to.be.fulfilled.then ->
-        expect(manager.updateEloNumbers(mdoc3, 'TestTournament')).to.be.fulfilled.then ->
-          Promise.all([
-            expect(manager.eloNumbers[pdoc.base64String]).to.be.at.least 1040
-            expect(manager.games[pdoc.base64String]).to.eql 3
-          ])
+    manager = Rating(repo)
+    manager.updateEloNumbers(mdoc1, 'TestTournament')
+    manager.updateEloNumbers(mdoc2, 'TestTournament')
+    manager.updateEloNumbers(mdoc3, 'TestTournament')
+    expect(manager.eloNumbers[pdoc.base64String]).to.be.at.least 1040
+    expect(manager.games[pdoc.base64String]).to.eql 3
 
   it "can return the scores for the tournament", ->
-    expect(manager.updateEloNumbers(mdoc1, 'TestTournament')).to.be.fulfilled.then ->
-      expect(manager.updateEloNumbers(mdoc2, 'TestTournament')).to.be.fulfilled.then ->
-        expect(manager.updateEloNumbers(mdoc3, 'TestTournament')).to.be.fulfilled.then ->
-          expect(manager.getScores('TestTournament')).to.be.fulfilled.then (scores)-> 
+    manager = Rating(repo)    
+    manager.updateEloNumbers(mdoc1, 'TestTournament')
+    manager.updateEloNumbers(mdoc2, 'TestTournament')
+    manager.updateEloNumbers(mdoc3, 'TestTournament')
+    expect(manager.getScores('TestTournament')).to.be.fulfilled.then (scores)-> 
             expect(scores).to.be.an 'array'
             expect(scores).to.be.lengthOf 3
             res= 
