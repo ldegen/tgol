@@ -84,22 +84,26 @@ module.exports = (CGOL_HOME, settings)->
     repo
       .getPatternByBase64ForTournament(data, req.params.tournament)
       .then (pdoc)->
+        pdoc.pin = ""
         res.statusCode = 200
         res.json pdoc
       .catch next
 
 
   service.post '/api/:tournament/patterns',jsonParser, (req, res, next)->
-    pdoc = req.body.pdoc
-    allowOverride = req.body.allowOverride
-    validate = Validator repo, req.params.tournament
-    validate pdoc, allowOverride
-      .then ->
-        pdoc.base64String = new Pattern(pdoc.base64String).minimize().encodeSync()
-        repo.savePattern(pdoc,req.params.tournament)
-      .then ->
-        res.json pdoc
-      .catch next
+    if settings.uploadDisabled
+      res.sendStatus 503
+    else
+      pdoc = req.body.pdoc
+      allowOverride = req.body.allowOverride
+      validate = Validator repo, req.params.tournament
+      validate pdoc, allowOverride
+        .then ->
+          pdoc.base64String = new Pattern(pdoc.base64String).minimize().encodeSync()
+          repo.savePattern(pdoc,req.params.tournament)
+        .then ->
+          res.json pdoc
+        .catch next
 
 
   service.post '/api/:tournamentName/matches', jsonParser, (req, res,next)->

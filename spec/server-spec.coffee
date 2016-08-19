@@ -191,7 +191,7 @@ describe "The Service", ->
           author:'John Doe'
           mail:'john@tarent.de'
           base64String:'lkjfazakjds=='
-          pin:'12345'
+          pin:''
       ]
   
   it "can persist an uploaded match", ->

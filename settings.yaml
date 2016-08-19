@@ -7,3 +7,4 @@ minify:
 sourceMaps:
   vendor: false
   client: true
+uploadDisabled: false
