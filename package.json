@@ -86,6 +86,7 @@
     "react-router",
     "readdirp",
     "request",
-    "rimraf"
+    "rimraf",
+    "split"
   ]
 }
