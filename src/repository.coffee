@@ -69,7 +69,7 @@ module.exports = (CGOL_HOME, settings)->
           throw err
       ).then -> 
         appendFile mfile, (JSON.stringify mdoc)+"\n"
-        
+
 
   saveTournament = (tdoc)->
     tdir = path.join CGOL_HOME,tdoc.name
@@ -126,6 +126,13 @@ module.exports = (CGOL_HOME, settings)->
     cachedTournament tournamentName
       .then (tournament)-> tournament.matches
 
+
+  getTournamentPin = (tournamentName)->
+    tfile = path.join CGOL_HOME, tournamentName, 'meta.yaml'
+    tdoc = loadYaml tfile
+    tdoc.pin 
+
+
   loadTournament = (tournamentName) ->
     pdir = path.join CGOL_HOME, tournamentName, 'patterns'
     mfile = path.join CGOL_HOME, tournamentName, 'matches.log'
@@ -154,3 +161,4 @@ module.exports = (CGOL_HOME, settings)->
   getPatternByEmailForTournament:getPatternByEmailForTournament
   getPatternsAndMatchesForTournament:getPatternsAndMatchesForTournament
   getMatchesForTournament:getMatchesForTournament
+  getTournamentPin:getTournamentPin

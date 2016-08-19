@@ -202,6 +202,11 @@ describe "The Repository",->
          expect(repository.getPatternByEmailForTournament('michnix@hastenich.de', tdoc.name)).to.be.rejectedWith(NoSuchPatternError)
        ]
 
+  it "can get the pin for a tournament", ->
+    tdoc = b.tournament
+      name:'TestTournament'
+    expect(repository.saveTournament(tdoc)).to.be.fulfilled.then ->
+      expect(repository.getTournamentPin(tdoc.name)).to.eql 't0ps3cr3t' 
 
   # it "can get an array of player information for the leaderboard", ->
   #   tdoc = b.tournament()
