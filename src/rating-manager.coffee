@@ -20,10 +20,10 @@ module.exports = (repo)->
       repo.getMatchesForTournament(tournamentName)
       .then (matches)->
         for match in matches
-          if eloNumbers[match.pattern1.base64String] == undefined
+          if not eloNumbers[match.pattern1.base64String]?
             eloNumbers[match.pattern1.base64String] = 1000
           
-          if eloNumbers[match.pattern2.base64String] == undefined
+          if not eloNumbers[match.pattern2.base64String]?
             eloNumbers[match.pattern2.base64String] = 1000     
           updateScores(match)
           updateGames(match)
@@ -48,10 +48,10 @@ module.exports = (repo)->
 
 
   updateScores = (mdoc)->
-    if eloNumbers[mdoc.pattern1.base64String] == undefined
+    if not eloNumbers[mdoc.pattern1.base64String]?
       eloNumbers[mdoc.pattern1.base64String] = 1000
           
-    if eloNumbers[mdoc.pattern2.base64String] == undefined
+    if not eloNumbers[mdoc.pattern2.base64String]?
       eloNumbers[mdoc.pattern2.base64String] = 1000
 
     elo1 = eloNumbers[mdoc.pattern1.base64String]
@@ -62,18 +62,18 @@ module.exports = (repo)->
     if mdoc.pattern1.score > mdoc.pattern2.score
       eloNumbers[mdoc.pattern1.base64String] = elo.updateRating(expected1, 1, elo1) 
       eloNumbers[mdoc.pattern2.base64String] = elo.updateRating(expected2, 0, elo2) 
-    else
+    else if mdoc.pattern1.score < mdoc.pattern2.score
       eloNumbers[mdoc.pattern1.base64String] = elo.updateRating(expected1, 0, elo1)
       eloNumbers[mdoc.pattern2.base64String] = elo.updateRating(expected2, 1, elo2)
 
 
   updateGames = (match)->
-    if games[match.pattern1.base64String] == undefined
+    if not games[match.pattern1.base64String]?
       games[match.pattern1.base64String] = 1
     else
       games[match.pattern1.base64String] += 1
     
-    if games[match.pattern2.base64String] == undefined
+    if not games[match.pattern2.base64String]?
       games[match.pattern2.base64String] = 1
     else
       games[match.pattern2.base64String] += 1
