@@ -47,9 +47,7 @@ module.exports = ->
       counters[i]++
       counters[j]++
 
-    console.log "counters", counters
     weights = counters.map (c)->1/(c+1)
-    console.log "weights", weights
 
     rnd = WeightedRandom weights
     i = rnd()

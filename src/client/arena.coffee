@@ -45,7 +45,7 @@ module.exports = class Arena extends React.Component
     b=@board()
     key = @_key b
     visited = @state.visited
-    if @state.generation < 200 && not visited[key]
+    if @state.generation < 400 && not visited[key]
       visited[key] = true
       b=b.next()
       delay = (300 / (1 + Math.sqrt( @state.generation)))
