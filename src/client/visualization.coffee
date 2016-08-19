@@ -258,7 +258,7 @@ class Visualiztation extends React.Component
     require("react-dom").findDOMNode this
 
   render: ->
-    div className:"wrapper"
+    div className:"d3wrapper"
   componentDidMount: ->
     @create()
   componentDidUpdate: ->

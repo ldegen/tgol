@@ -292,3 +292,12 @@ there's a rowspan on the first cell. Case added to the tests. issue#432 */
         width: 300px;
     }
 }
+
+.leaderboard svg{
+  width:150px;
+  height:100px;
+}
+
+.leaderboard td {
+  vertical-align:middle;
+}

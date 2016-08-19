@@ -1,37 +1,34 @@
 React = require "react"
-{div,p,table,h1,thead,tbody,tr,th,td,img,footer} = require "../react-utils"
+{div,p,table,h1,thead,tbody,tr,th,td,img,footer,factory} = require "../react-utils"
 Promise = require "bluebird"
 request = Promise.promisify require "request"
+Util = require "../util"
+Visualization = factory require "./visualization"
+Bbox = require "../bbox"
 module.exports = class Leaderboard extends React.Component
 
 
   constructor: (props)->
     super props
     @state =
-      scores:[
-        author: "Roman"
-        games: 10
-        score:1010
-        base64String: "lalala"
-      ,
-        author: "Roman"
-        games: 10
-        score:1010
-        base64String: "lalelu"
-      ,
-        author: "Roman"
-        games: 10
-        score:1010
-        base64String: "lumpi"
-      ]
+      scores:[]
   
   tableRow: (row)->
+    cells = Util
+      .cells row.base64String
+      .map ([x,y])->[x,y,0]
     tr key:row.base64String,
       td row.author
       td row.games
       td row.score
-      td row.base64String
+      td Visualization
+        livingCells:cells
+        mode:"play"
+        window: new Bbox cells 
   componentDidMount: ->
+    setInterval @updateScores, 1000
+
+  updateScores: =>
     request location.origin + "/api/froscon2016/leaderboard"
       .then (resp)=>
         @setState scores:JSON.parse resp.body
