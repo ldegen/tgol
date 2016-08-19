@@ -1,57 +1,85 @@
+.leaderboard {
+  position:relative;
+  top:0px;
+  box-sizing:border-box;
+  height:100%;
+  width:100%;
+}
+.leaderboard .header {
+  padding-top:20px;
+  position:relative;
+}
 .leaderboard .background_container {
-    border-top: 6px solid #cc0000;
+  overflow:hidden;
+  border-top: 6px solid #cc0000;
+  position:absolute;
+  top:0px;
+  box-sizing:border-box;
+  height:100%;
+  width: 100%;
+  padding-bottom: 135px;
+  padding-top: 60px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .leaderboard .wrapper {
-    margin: 0 auto 90px;
-    width: 50%;
+  top:0px;
+  left:0px;
+  position:relative;
+  /*margin: 0 auto 90px;*/
+  width: 100%;
+  height:100%;
+  overflow:hidden;
 }
 
 .leaderboard img#logo {
-    display: block;
-    margin: 80px auto 90px;
+  display: block;
+  margin: 80px auto 90px;
 }
 
 .leaderboard .text_container p {
-    margin-bottom: 8px;
+  margin-bottom: 8px;
 }
 
 .leaderboard .text_container p:last-of-type {
-    margin-bottom: 50px;
+  margin-bottom: 50px;
 
 }
 
 .leaderboard .flex {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .leaderboard .links > .link_container:last-of-type {
-    margin-top: 20px;
-    text-align: center;
+  margin-top: 20px;
+  text-align: center;
 }
 
 .leaderboard .btn {
-    background: #f00;
-    background: -webkit-linear-gradient(#f00, #960000);
-    background: linear-gradient(#f00, #960000);
-    border-radius: 5px;
-    color: #fff;
-    display: inline-block;
-    padding: 8px 20px;
-    font: normal 700 24px/1 "Open Sans", sans-serif;
-    text-align: center;
-    text-shadow: 1px 1px 0 #666;
-    text-decoration: inherit;
-    margin-top: 50px;
+  background: #f00;
+  background: -webkit-linear-gradient(#f00, #960000);
+  background: linear-gradient(#f00, #960000);
+  border-radius: 5px;
+  color: #fff;
+  display: inline-block;
+  padding: 8px 20px;
+  font: normal 700 24px/1 "Open Sans", sans-serif;
+  text-align: center;
+  text-shadow: 1px 1px 0 #666;
+  text-decoration: inherit;
+  margin-top: 50px;
 }
 
 .leaderboard .btn:hover {
-    color: #fff;
+  color: #fff;
 }
 
 .btn:hover {
-    color: #fff;
+  color: #fff;
+  margin-left:auto;
+  margin-right:auto;
 }
 
 
@@ -59,14 +87,14 @@
 /** liste **/
 
 ol {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 
 /* 5. footer
-   ========================================================================== */
+========================================================================== */
 
-.leaderboard footer {
+  .leaderboard footer {
     background-color: #cc0000;
     position: absolute;
     left: 0;
@@ -74,16 +102,16 @@ ol {
     height: 110px;
     width: 100%;
 
-}
+  }
 
-.leaderboard p.footer_paragraph {
+  .leaderboard p.footer_paragraph {
     color: #fff;
     font-size: 15px;
     margin: 0px auto;
     padding: 50px 0 40px;
     text-align: center;
     width: 50%;
-}
+  }
 
 
 
@@ -91,213 +119,217 @@ ol {
 
 
 
-/* 6. leaderboard
-   ========================================================================== */
+  /* 6. leaderboard
+  ========================================================================== */
 
-.leaderboard h1 {
+  .leaderboard h1 {
+  
     color: #c00;
     font-size: 36px;
     font-weight: 600;
-    margin: 80px 0 30px;
-}
+    margin-bottom: 30px;
+    margin-left:auto;
+    margin-right:auto;
+    text-align:center;
+  }
 
 
-/* 7. tables
-   ========================================================================== */
+  /* 7. tables
+  ========================================================================== */
 
-/**
+  /**
 
-/*!
-Pure v0.6.0
-Copyright 2014 Yahoo! Inc. All rights reserved.
-Licensed under the BSD License.
-https://github.com/yahoo/pure/blob/master/LICENSE.md
-*/
-/*!
+  /*!
+  Pure v0.6.0
+  Copyright 2014 Yahoo! Inc. All rights reserved.
+  Licensed under the BSD License.
+  https://github.com/yahoo/pure/blob/master/LICENSE.md
+   */
+  /*!
 
 
- * Remove most spacing between table cells.
- */
+   * Remove most spacing between table cells.
+   */
 
-.leaderboard table {
+  .leaderboard table {
     border-collapse: collapse;
     border-spacing: 0;
-}
+  }
 
-.leaderboard td,
-.leaderboard th {
+  .leaderboard td,
+  .leaderboard th {
     padding: 0;
-}
+  }
 
-.leaderboard .pure-table {
+  .leaderboard .pure-table {
     /* Remove spacing between table cells (from Normalize.css) */
     border-collapse: collapse;
     border-spacing: 0;
     empty-cells: show;
     border: 1px solid #cbcbcb;
     width: 100%;
-}
+  }
 
-.leaderboard .pure-table caption {
+  .leaderboard .pure-table caption {
     color: #000;
     font: italic 85%/1 arial, sans-serif;
     padding: 1em 0;
     text-align: center;
-}
+  }
 
-.leaderboard .pure-table td,
-.leaderboard .pure-table th {
+  .leaderboard .pure-table td,
+  .leaderboard .pure-table th {
     border-left: 1px solid #cbcbcb;/*  inner column border */
     border-width: 0 0 0 1px;
     font-size: inherit;
     margin: 0;
     overflow: visible; /*to make ths where the title is really long work*/
     padding: 0.5em 1em; /* cell padding */
-}
+  }
 
-/* Consider removing this next declaration block, as it causes problems when
-there's a rowspan on the first cell. Case added to the tests. issue#432 */
-.leaderboard .pure-table td:first-child,
-.leaderboard .pure-table th:first-child {
+  /* Consider removing this next declaration block, as it causes problems when
+  there's a rowspan on the first cell. Case added to the tests. issue#432 */
+  .leaderboard .pure-table td:first-child,
+  .leaderboard .pure-table th:first-child {
     border-left-width: 0;
-}
+  }
 
-.leaderboard .pure-table thead {
+  .leaderboard .pure-table thead {
     background-color: #e0e0e0;
     color: #000;
     text-align: left;
     vertical-align: bottom;
-}
+  }
 
-.leaderboard .pure-table td {
+  .leaderboard .pure-table td {
     background-color: transparent;
-}
+  }
 
-.leaderboard tr:nth-of-type(even) td {
+  .leaderboard tr:nth-of-type(even) td {
     background-color: #f2f2f2;
-}
+  }
 
-/* nth-child selector for modern browsers */
-.leaderboard .pure-table-striped tr:nth-child(2n-1) td {
+  /* nth-child selector for modern browsers */
+  .leaderboard .pure-table-striped tr:nth-child(2n-1) td {
     background-color: #f2f2f2;
-}
+  }
 
-/* BORDERED TABLES */
-.leaderboard .pure-table-bordered td {
+  /* BORDERED TABLES */
+  .leaderboard .pure-table-bordered td {
     border-bottom: 1px solid #cbcbcb;
-}
-.leaderboard .pure-table-bordered tbody > tr:last-child > td {
+  }
+  .leaderboard .pure-table-bordered tbody > tr:last-child > td {
     border-bottom-width: 0;
-}
+  }
 
-/* HORIZONTAL BORDERED TABLES */
+  /* HORIZONTAL BORDERED TABLES */
 
-.leaderboard .pure-table-horizontal td,
-.leaderboard .pure-table-horizontal th {
+  .leaderboard .pure-table-horizontal td,
+  .leaderboard .pure-table-horizontal th {
     border-width: 0 0 1px 0;
     border-bottom: 1px solid #cbcbcb;
-}
-.leaderboard .pure-table-horizontal tbody > tr:last-child > td {
+  }
+  .leaderboard .pure-table-horizontal tbody > tr:last-child > td {
     border-bottom-width: 0;
-}
+  }
 
 
 
-/**** landingpage without startbutton ****/
+  /**** landingpage without startbutton ****/
 
-.withoutStart {
+  .withoutStart {
     text-align: center;
-}
+  }
 
 
 
 
-/* 8. media querie for disply < 800px
-   ========================================================================== */
+  /* 8. media querie for disply < 800px
+  ========================================================================== */
 
 
-@media (max-width: 799px) {
+  @media (max-width: 799px) {
 
     .leaderboard .wrapper {
-        margin: 0 auto 90px;
-        width: 100%;
+      margin: 0 auto 90px;
+      width: 100%;
     }
 
-   .leaderboard .text_container p {
-        margin-left: 10%;
-        margin-right: 10%;
+    .leaderboard .text_container p {
+      margin-left: 10%;
+      margin-right: 10%;
     }
 
     .leaderboard .links {
-        margin-left: 10%;
-        margin-right: 10%;
+      margin-left: 10%;
+      margin-right: 10%;
     }
 
     .leaderboard h1 {
-        margin: 80px 10% 30px;
+      margin: 80px 10% 30px;
     }
 
     .leaderboard .pure-table {
-        margin: 0 10% 0 10%;
-        width: 80%;
+      margin: 0 10% 0 10%;
+      width: 80%;
     }
 
     .text_container.flex {
-        margin: 0 10%;
+      margin: 0 10%;
     }
 
     .text_container.flex .instruction {
-        margin-left: -68px;
+      margin-left: -68px;
     }
 
     .text_container.flex {
-        flex-direction: column;
+      flex-direction: column;
     }
 
     .text_container.flex .flexReorder {
-        order: -1;
+      order: -1;
     }
 
     .text_container.flex .flexReorder p{
-        margin-bottom: 10px;
+      margin-bottom: 10px;
     }
 
     .text_container.flex h1 {
-        margin-top: 35px;
+      margin-top: 35px;
     }
 
     .image img {
-        margin-bottom: 20px;
-        width: 400px;
+      margin-bottom: 20px;
+      width: 400px;
     }
 
     ol {
-        margin: 0 10%;
+      margin: 0 10%;
     }
 
     .text_container ol + p {
-        margin-top: 20px;
+      margin-top: 20px;
     }
 
     .text_container p.bold {
-        font-size: 16px;
+      font-size: 16px;
     }
 
-}
+  }
 
-@media (max-width: 400px) {
+  @media (max-width: 400px) {
 
     .image img {
-        margin-bottom: 20px;
-        width: 300px;
+      margin-bottom: 20px;
+      width: 300px;
     }
-}
+  }
 
-.leaderboard svg{
-  width:150px;
-  height:100px;
-}
+  .leaderboard svg{
+    width:150px;
+    height:100px;
+  }
 
-.leaderboard td {
-  vertical-align:middle;
-}
+  .leaderboard td {
+    vertical-align:middle;
+  }
