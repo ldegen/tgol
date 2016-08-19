@@ -19,7 +19,6 @@ module.exports = (repo)->
     if init
       repo.getMatchesForTournament(tournamentName)
       .then (matches)->
-        console.log matches
         for match in matches
           if eloNumbers[match.pattern1.base64String] == undefined
             eloNumbers[match.pattern1.base64String] = 1000

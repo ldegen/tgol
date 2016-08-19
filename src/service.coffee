@@ -66,6 +66,8 @@ module.exports = (CGOL_HOME, settings)->
   service.get '/api/:tournamentName/leaderboard', (req, res, next)->
     ratingManager.getScores(req.params.tournamentName)
       .then (scores)->
+        scores.sort (a,b)->
+          return b.score - a.score
         res.status(200).json scores
 
   service.get '/api/:tournament/patterns/:base64String', (req, res, next)->
