@@ -83,6 +83,7 @@ module.exports = class Arena extends React.Component
           livingCells: b.livingCells()
           window: if b.livingCells().length>0 then b.bbox()
           visited: {}
+          match: mdoc
           pattern1:
             name:pdoc1.name
             author:pdoc1.author
@@ -96,7 +97,13 @@ module.exports = class Arena extends React.Component
           @play
 
   matchOver: ->
-    #@prepareMatch()
+    request
+      url: location.origin + "/api/froscon2016/matches"
+      method:"POST"
+      json: mdoc: merge @state.match,
+        pattern1:score: @state.pattern1.score
+        pattern2:score: @state.pattern2.score
+    .then =>@prepareMatch()
   componentDidMount: ->
     @prepareMatch()
 

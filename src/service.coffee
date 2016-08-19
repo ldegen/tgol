@@ -103,7 +103,7 @@ module.exports = (CGOL_HOME, settings)->
     repo
       .saveMatch(mdoc, req.params.tournamentName)
       .then ->
-        res.status(200).sendFile path.resolve __dirname, '..', 'static', 'index.html'
+        res.status(200).json mdoc
       .catch next
 
   service.get '/api/:tournamentName/matchmaker', (req, res, next)->
