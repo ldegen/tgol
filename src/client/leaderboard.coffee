@@ -1,13 +1,14 @@
 React = require "react"
 {div,p,table,h1,thead,tbody,tr,th,td,img,footer} = require "../react-utils"
-
+Promise = require "bluebird"
+request = Promise.promisify require "request"
 module.exports = class Leaderboard extends React.Component
 
 
   constructor: (props)->
     super props
     @state =
-      rows:[
+      scores:[
         author: "Roman"
         games: 10
         score:1010
@@ -30,7 +31,10 @@ module.exports = class Leaderboard extends React.Component
       td row.games
       td row.score
       td row.base64String
-    
+  componentDidMount: ->
+    request location.origin + "/api/froscon2016/leaderboard"
+      .then (resp)=>
+        @setState scores:JSON.parse resp.body
   render: ->
     div className: "leaderboard",
       div className:"background_container",
@@ -44,7 +48,7 @@ module.exports = class Leaderboard extends React.Component
                 th className:"leaderHeadCell", "Score"
                 th className:"leaderHeadCell", "Pattern"
             tbody className:"leaderBody",
-              (@tableRow row for row in @state.rows)
+              (@tableRow row for row in @state.scores)
           footer(
             p className:"footer_paragraph",
               "Made by"
