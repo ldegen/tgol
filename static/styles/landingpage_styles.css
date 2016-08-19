@@ -83,6 +83,8 @@ body {
 }
 
 
+
+
 /* 3. links
    ========================================================================== */
 
@@ -95,6 +97,9 @@ a:hover {
 }
 
 
+
+
+
 /* 4. gol landingpage
    ========================================================================== */
 
@@ -104,7 +109,7 @@ a:hover {
 
 .wrapper {
     margin: 0 auto 90px;
-    width: 50%;
+    width: 60%;
 }
 
 img#logo {
@@ -116,20 +121,75 @@ img#logo {
     margin-bottom: 8px;
 }
 
+.text_container .bold {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.text_container p.bold {
+    font-size: 20px;
+}
+
+h1.ablauf  {
+    font-size: 14px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+
+}
+
+
 .text_container p:last-of-type {
     margin-bottom: 50px;
 
 }
+
+.text_container.flex {
+    margin: 0 0 50px 0;
+    justify-content: flex-start;
+}
+
+.text_container.flex .instruction {
+    margin-left: 20px;
+    margin-top: 8px;
+}
+
+
+.text_container.flex h1 {
+    font-size: 12px;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.image {
+    flex-shrink: 0;
+}
+
+.image img {
+    width: 100%;
+}
+
+
 
 .flex {
     display: flex;
     justify-content: space-between;
 }
 
-.links > .link_container:last-of-type {
-    margin-top: 20px;
+.links {
+    margin-top: 50px;
+}
+
+.links > .link_container_btn {
+    margin-top: 0px;
     text-align: center;
 }
+
+.links > .link_container_btn:last-of-type {
+    margin:0;
+    text-align: center;
+}
+
 
 .btn {
     background: #f00;
@@ -138,16 +198,28 @@ img#logo {
     border-radius: 5px;
     color: #fff;
     display: inline-block;
-    padding: 8px 20px;
+    padding: 8px 25px;
     font: normal 700 24px/1 "Open Sans", sans-serif;
     text-align: center;
     text-shadow: 1px 1px 0 #666;
     text-decoration: inherit;
-    margin-top: 50px;
+    margin-top: 40px;
+}
+
+.link_container_btn a {
+    color: #fff;
 }
 
 .btn:hover {
     color: #fff;
+}
+
+
+
+/** liste **/
+
+ol {
+    margin-bottom: 30px;
 }
 
 
@@ -172,6 +244,10 @@ p.footer_paragraph {
     text-align: center;
     width: 50%;
 }
+
+
+
+
 
 
 
@@ -287,6 +363,13 @@ tr:nth-of-type(even) td {
 
 
 
+/**** landingpage without startbutton ****/
+
+.withoutStart {
+    text-align: center;
+}
+
+
 
 
 /* 8. media querie for disply < 800px
@@ -319,6 +402,53 @@ tr:nth-of-type(even) td {
         width: 80%;
     }
 
+    .text_container.flex {
+        margin: 0 10%;
+    }
 
+    .text_container.flex .instruction {
+        margin-left: -68px;
+    }
 
+    .text_container.flex {
+        flex-direction: column;
+    }
+
+    .text_container.flex .flexReorder {
+        order: -1;
+    }
+
+    .text_container.flex .flexReorder p{
+        margin-bottom: 10px;
+    }
+
+    .text_container.flex h1 {
+        margin-top: 35px;
+    }
+
+    .image img {
+        margin-bottom: 20px;
+        width: 400px;
+    }
+
+    ol {
+        margin: 0 10%;
+    }
+
+    .text_container ol + p {
+        margin-top: 20px;
+    }
+
+    .text_container p.bold {
+        font-size: 16px;
+    }
+
+}
+
+@media (max-width: 400px) {
+
+    .image img {
+        margin-bottom: 20px;
+        width: 300px;
+    }
 }

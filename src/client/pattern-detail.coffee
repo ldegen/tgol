@@ -5,6 +5,8 @@ Pattern = require "../pattern"
 {label, h1,h2,ul,li,p,div,factory,input, button, span, img} = require "../react-utils"
 Promise = require "bluebird"
 request = Promise.promisify require "request"
+{Link} = require "react-router"
+Link = factory Link
 
 Visualization = factory require "./visualization"
 module.exports = class PatternDetail extends React.Component
@@ -174,7 +176,7 @@ module.exports = class PatternDetail extends React.Component
 
         div(
           className: "form"
-          h1 "(Yet) Unknown Pattern"
+          h1 "Bitte Pattern benennen"
 
           Visualization
             livingCells:pattern.cells
@@ -186,7 +188,7 @@ module.exports = class PatternDetail extends React.Component
             @labelValue "Status:", @state.status
             @labelValue "Cells:", pattern.cells.length
             @labelValue "Dimensions:", pattern.bbox().width()+" x "+pattern.bbox().height()
-            @navButton "submit", "Am Tournier anmelden", disabled: not @valid()
+            @navButton "submit", "Pattern an Server schicken", disabled: not @valid()
             @navButton "qr", "QR-Code anzeigen"
         )
     known:
@@ -220,7 +222,7 @@ module.exports = class PatternDetail extends React.Component
           h1 "Confirm Overwrite"
           p """
             Du hast bereits ein Muster mit dieser Email-Adresse verknüpft.
-            Da immter nur ein Muster pro Email-Adresse gleichzeitig am
+            Da immer nur ein Muster pro Email-Adresse gleichzeitig am
             Wettbewerb teilnehmen kann, wird das vorherige Muster abgemeldet.
             Dein Punktestand wird zurückgesetzt -- Du fängst also mit dem neuen
             Muster wieder ganz von vorne an.
@@ -252,28 +254,29 @@ module.exports = class PatternDetail extends React.Component
       render: ->
         div(
           className: "form"
-          h1 "Wie erreichen wir Dich?"
+          h1 "Am Turnier teilnehmen!"
           div
             className: "field-group"
             @textInput "mail", "Email"
             @textInput "pin", "PIN"
             ul
               li """
-                 Mit der Teilnahme am Wettbewerb bestätigst Du, dass
-                 wir dich unter dieser Adresse kontaktieren dürfen, z.B. um dich über Gewinne sowie das Endergebnis
-                 des Wettbewerbs zu benachrichtigen. Wir verwenden diese Adresse
-                 ausschließlich im Rahmen dieses Wettbewerbs und geben Sie nicht an
-                 Dritte weiter.
+                 Wir speichern Eure E-Mail-Adresse ausschließlich, um Euch über die Ergebnisse des GoL-Contest zu infomieren!
                  """
+                Link(
+                  to:'http://www.tarent.de/GoL2016/datenschutz.html'
+                  target:'_blank'
+                  'Datenschutzerklärung') 
               li """
-                 Die Emailadresse verwenden wir zum Identifizieren des Autors eines Musters.
-                 Jedes Muster ist fest einer Emailadresse zugeordnet.
-                 Es kann immer nur ein Muster gleichzeitig mit dieser Emailadresse verwendet werden.
-                 Wenn du das erste mal ein Muster mit dieser Adresse anmeldest, legst du eine PIN fest.
-                 Du musst die selbe PIN angeben, wenn du später das mit der Emailadresse verknüpfte Muster ersetzen möchtest.
+                 Darüber hinaus verwenden wir die E-Mail zum Identifizieren des Autors eines Musters. 
+                 Jedes Muster ist fest einer E-Mail zugeordnet — es kann immer nur ein Muster pro E-Mail aktiv sein. 
+                 Wenn du das erste mal ein Muster mit dieser E-Mail anmeldest, legst du eine PIN fest. 
+                 Wenn du später das mit der E-Mail verknüpfte Muster ersetzen möchtest brauchst Du Deine PIN. 
                  Das ist während der gesamten Laufzeit des Wettbewerbs möglich.
                  """
-            @checkbox "agree", "Ich verstehe und bin einverstanden.", "agree"
-            @navButton "abort", "Nein, lieber nicht."
-            @navButton "submit", "Tu es!", disabled: not @valid()
+              li """
+                 Der Rechtsweg ist ausgeschlossen!
+                 """
+            @navButton "abort", "Zurück"
+            @navButton "submit", "Ja, ich nehme teil!", disabled: not @valid()
         )
