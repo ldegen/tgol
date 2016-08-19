@@ -106,8 +106,7 @@ module.exports = (CGOL_HOME, settings)->
         .saveMatch(mdoc, req.params.tournamentName)
         .then ->
           ratingManager.updateEloNumbers(mdoc, req.params.tournamentName)
-            .then ->
-              res.status(200).json mdoc
+          res.status(200).json mdoc
         .catch next
     else
       res.sendStatus 401
