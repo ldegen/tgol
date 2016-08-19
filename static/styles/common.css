@@ -1,0 +1,122 @@
+
+/*******************/
+/*table of content*/
+/*******************/
+
+/* 1. browser resest */
+/* 2. global
+/* 3. links
+/* 4. gol landingpage
+/* 5. footer
+/* 6. leaderboard
+/* 7. tables
+/* 8. media querie for disply < 800px
+
+
+
+/* 1. browser resest
+   ========================================================================== */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+body {
+    line-height: 1;
+}
+
+ol, ul {
+    list-style: none;
+}
+
+blockquote, q {
+    quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* 2. global
+   ========================================================================== */
+
+html {
+    min-height: 100%;
+    position: relative;
+}
+
+body {
+    color: #333333;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42em;
+    margin: 0 0 170px;
+}
+
+html, body {
+  position:relative;
+  top:0px;
+  left:0px;
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
+  margin: 0px;
+  padding: 0px;
+}
+body * {
+  margin: 0;
+  padding: 0;
+  font-family: "Lucida Grande", helvetica, sans-serif;
+}
+
+#app-root , .app{
+  width:100%;
+  height:100%;
+  box-sizing: border-box;
+  margin:0;
+}
+/* 3. links
+   ========================================================================== */
+
+a, a:visited {
+    color: #cc0000;
+}
+
+a:hover {
+    color: #707070;
+}
+
+
+/* 4. gol landingpage
+   ========================================================================== */
+

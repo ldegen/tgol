@@ -256,6 +256,8 @@ describe "The Service", ->
           expect(JSON.parse resp.body).to.be.an('array')
           expect(JSON.parse(resp.body)[0]).to.be.an('object').which.has.a.property('score')
           expect(JSON.parse(resp.body)[0]).to.be.an('object').which.has.a.property('name')
+          expect(JSON.parse(resp.body)[0]).to.be.an('object').which.has.a.property('author')
+          expect(JSON.parse(resp.body)[0]).to.be.an('object').which.has.a.property('base64String')
           expect(JSON.parse(resp.body)[0]).to.be.an('object').which.has.a.property('games')
         
 

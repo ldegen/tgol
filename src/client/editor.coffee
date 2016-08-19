@@ -152,7 +152,7 @@ class Editor extends React.Component
         .translate dx,dy
         .cells
   render: ->
-    (div className:"layout",
+    (div className:"layout editor application",
       (div id:"top-panel", className:"panel top",
         (Panel bus:@bus, commands: @topCommands())
       )
