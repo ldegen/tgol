@@ -1,5 +1,5 @@
 React = require "react"
-{div,p,table,h1,thead,tbody,tr,th,td,img,footer,factory} = require "../react-utils"
+{div,p,table,h1,thead,tbody,tr,th,td,img,footer,factory,span} = require "../react-utils"
 Promise = require "bluebird"
 request = Promise.promisify require "request"
 Util = require "../util"
@@ -18,7 +18,10 @@ module.exports = class Leaderboard extends React.Component
       .cells row.base64String
       .map ([x,y])->[x,y,0]
     tr key:row.base64String,
-      td row.author
+      td( 
+        span className:"name", row.name
+        span className:"author", "by #{row.author}"
+      )
       td row.games
       td row.score
       td Visualization

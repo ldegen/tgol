@@ -4,6 +4,7 @@
   box-sizing:border-box;
   height:100%;
   width:100%;
+  font-size:30px;
 }
 .leaderboard .header {
   padding-top:20px;
@@ -22,7 +23,13 @@
   padding-left: 20px;
   padding-right: 20px;
 }
-
+.leaderboard td span {
+  float:left;
+}
+.leaderboard span.author {
+  clear:both;
+  font-size: 22px;
+}
 .leaderboard .wrapper {
   top:0px;
   left:0px;
