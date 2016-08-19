@@ -97,11 +97,13 @@ describe "The Repository",->
       id:'123'
       pattern1:
         base64String:'kjadfajgkja=='
+        mail:'bla@blubb.de'
         translation:'1/3'
         modulo:3
         score:123
       pattern2:
         base64String:'ahalkaiatsci='
+        mail:'john@tarent.de'
         translation:'-6/-4'
         modulo:6
         score:456

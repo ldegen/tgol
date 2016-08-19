@@ -16,6 +16,7 @@ module.exports = (CGOL_HOME, settings)->
   Pattern = require "./pattern"
   RatingManager = require "./rating-manager"
   ratingManager = RatingManager repo
+  merge = require "deepmerge"
 
   # client code
   browserify.settings 'extensions', ['.coffee']
@@ -85,6 +86,7 @@ module.exports = (CGOL_HOME, settings)->
       .getPatternByBase64ForTournament(data, req.params.tournament)
       .then (pdoc)->
         pdoc.pin = ""
+        pdoc.mail = ""
         res.statusCode = 200
         res.json pdoc
       .catch next
@@ -108,12 +110,21 @@ module.exports = (CGOL_HOME, settings)->
 
   service.post '/api/:tournamentName/matches', jsonParser, (req, res,next)->
     mdoc = req.body.mdoc
+    internalMdoc = merge mdoc, {}
     tpin = repo.getTournamentPin req.params.tournamentName
     if tpin == req.body.pin
       repo
-        .saveMatch(mdoc, req.params.tournamentName)
+        .getPatternByBase64ForTournament(internalMdoc.pattern1.base64String, req.params.tournamentName)
+        .then (pdoc)->
+          internalMdoc.pattern1.mail = pdoc.mail
         .then ->
-          ratingManager.updateEloNumbers(mdoc, req.params.tournamentName)
+          repo.getPatternByBase64ForTournament(internalMdoc.pattern2.base64String, req.params.tournamentName)
+        .then (pdoc2)->
+          internalMdoc.pattern2.amil = pdoc2.mail
+        .then ->
+          repo.saveMatch(internalMdoc, req.params.tournamentName)
+        .then ->
+          ratingManager.updateEloNumbers(internalMdoc, req.params.tournamentName)
           res.status(200).json mdoc
         .catch next
     else

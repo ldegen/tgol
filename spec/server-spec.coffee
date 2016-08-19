@@ -189,7 +189,7 @@ describe "The Service", ->
         expect(JSON.parse resp.body).to.eql
           name:'MyPattern'
           author:'John Doe'
-          mail:'john@tarent.de'
+          mail:''
           base64String:'lkjfazakjds=='
           pin:''
       ]
@@ -207,28 +207,35 @@ describe "The Service", ->
         variant:7
         score:0
       pin:673428
+
+    tdoc = builder.tournament
+      matches:[
+        mdoc
+      ]
+      patterns:[
+        {base64String:'kjafdscaASDasdkjaA'
+        mail:'john@tarent.de'},
+        {base64String:'ASDlkajsdazASDalksmAS'
+        mail:'jane@tarent.de'}
+      ]
     auth = 
       url:base+'/api/TestTournament/matches'
       method:'POST'
       json:
-        mdoc:
-          pattern1:
-            base64String:'kjafdscaASDasdkjaA'
-            translation:[-1,4]
-            variant:3
-            score:0
-          pattern2:
-            base64String:'ASDlkajsdazASDalksmAS'
-            translation:[5,-8]
-            variant:7
-            score:0
-          pin:673428
+        mdoc:mdoc
         pin:'t0ps3cr3t'
-    expect(request auth).to.be.fulfilled.then (resp)->
-      expect(resp.statusCode).to.eql 200
+    
+    expect(
+      repo
+        .saveTournament tdoc
+        .then ->request auth
+    ).to.be.fulfilled.then (resp)->
       mfile = path.join CGOL_HOME, 'TestTournament', 'matches.log'
       matches = loadMatchesLog mfile
-      expect(matches[matches.length-1]).to.eql mdoc
+      Promise.all [
+        expect(resp.statusCode).to.eql 200
+        expect(matches[matches.length-1]).to.eql mdoc
+      ]
 
 
   it "can return scores for the matches to be displayed on a leaderboard", ->

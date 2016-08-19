@@ -62,7 +62,7 @@ module.exports = (repo)->
     if mdoc.pattern1.score > mdoc.pattern2.score
       eloNumbers[mdoc.pattern1.base64String] = elo.updateRating(expected1, 1, elo1) 
       eloNumbers[mdoc.pattern2.base64String] = elo.updateRating(expected2, 0, elo2) 
-    else
+    else if mdoc.pattern1.score < mdoc.pattern2.score
       eloNumbers[mdoc.pattern1.base64String] = elo.updateRating(expected1, 0, elo1)
       eloNumbers[mdoc.pattern2.base64String] = elo.updateRating(expected2, 1, elo2)
 
