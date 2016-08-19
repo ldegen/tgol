@@ -34,6 +34,7 @@ describe "The Service", ->
   builder = undefined
   repo = undefined
   pdoc = undefined
+  mdoc = undefined
 
   this.timeout(20000)
 
@@ -88,6 +89,19 @@ describe "The Service", ->
       .then -> log "mkdir complete"
       .then ->
         repo = Repository CGOL_HOME
+        mdoc = 
+          id:'match1'
+          pattern1:
+            base64String:'lkjfazakjds=='
+            translation:'1/1'
+            modulo:1
+            score:100
+          pattern2:
+            base64String:'iuzaiszdgig=='
+            translation:'2/2'
+            modulo:2
+            score:200
+          pin:45678
         tdoc = builder.tournament
           name:'TestTournament'
           patterns:[
@@ -111,16 +125,7 @@ describe "The Service", ->
             pin:'98765'}
           ]
           matches:[
-            pattern1:
-              base64String:'lkjfazakjds=='
-              translation:[1,1]
-              variant:1
-              score:100
-            pattern2:
-              base64String:'iuzaiszdgig=='
-              translation:[2,2]
-              variant:2
-              score:200
+            mdoc
           ]
         repo.saveTournament(tdoc)
       .then -> log "saveTournament complete"
@@ -228,13 +233,32 @@ describe "The Service", ->
 
 
   it "can return scores for the matches to be displayed on a leaderboard", ->
-    request "#{base}/api/TestTournament/leaderboard"
-      .then (resp)->
-        expect(resp.statusCode).to.eql 200
-        expect(JSON.parse resp.body).to.be.an('array')
-        expect(JSON.parse(resp.body)[0]).to.be.an('object').which.has.a.property('score')
-        expect(JSON.parse(resp.body)[0]).to.be.an('object').which.has.a.property('name')
-        expect(JSON.parse(resp.body)[0]).to.be.an('object').which.has.a.property('games')
+    auth = 
+      url:"#{base}/api/TestTournament/matches"
+      method:'POST'
+      json:
+        mdoc:
+          id:'match2'
+          pattern1:
+            base64String:'lkjfazakjds=='
+            translation:'1/1'
+            modulo:1
+            score:100
+          pattern2:
+            base64String:'iuzaiszdgig=='
+            translation:'2/2'
+            modulo:2
+            score:200
+          pin:45678
+    # console.log auth
+    expect(request auth).to.be.fulfilled.then ->
+      expect(request "#{base}/api/TestTournament/leaderboard").to.be.fulfilled
+        .then (resp)->
+          expect(resp.statusCode).to.eql 200
+          expect(JSON.parse resp.body).to.be.an('array')
+          expect(JSON.parse(resp.body)[0]).to.be.an('object').which.has.a.property('score')
+          expect(JSON.parse(resp.body)[0]).to.be.an('object').which.has.a.property('name')
+          expect(JSON.parse(resp.body)[0]).to.be.an('object').which.has.a.property('games')
         
 
   it "can get a collection of all patterns and matches in a tournament", ->

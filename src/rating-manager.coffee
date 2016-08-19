@@ -1,11 +1,12 @@
-module.exports = (repo, tournamentName)->
+module.exports = (repo)->
+  Promise = require "bluebird"
   Elo = require "elo-rank"
   elo = Elo()
   scores={}
   eloNumbers={}
   
 
-  updateEloNumbers = (mdoc)->
+  updateEloNumbers = (mdoc, tournamentName)->
     repo.getMatchesForTournament(tournamentName)
       .then (matches)->
         for match in matches
@@ -25,17 +26,24 @@ module.exports = (repo, tournamentName)->
         else
           eloNumbers[mdoc.pattern1.base64String] = elo.updateRating(expected1, 0, elo1)
           eloNumbers[mdoc.pattern2.base64String] = elo.updateRating(expected2, 1, elo2)
-        console.log 'ELONUMBERS AFTER:', eloNumbers
 
 
-  getScore = (pdoc)->
+  getScores = (tournamentName)->
     repo.getMatchesForTournament(tournamentName)
       .then (matches)->
-        calculateScores matches
-        if scores[pdoc.base64String] != undefined
-          return scores[pdoc.base64String]
-        else
-          return 0
+        pairs = ([key,score] for key,score of eloNumbers)
+        entryPromises = pairs.map ([key,score])-> 
+          repo
+            .getPatternByBase64ForTournament key, tournamentName
+            .then (pdoc)-> 
+              entry = {}
+              entry['name'] = pdoc.name
+              entry['author'] = pdoc.author
+              entry['score'] = score
+              entry['base64String'] = pdoc.base64String
+              entry
+        Promise.all entryPromises
+       
 
   calculateScores = (matches)->
     for match in matches
@@ -54,4 +62,4 @@ module.exports = (repo, tournamentName)->
   updateEloNumbers:updateEloNumbers
   scores:scores
   eloNumbers:eloNumbers
-  getScore:getScore
+  getScores:getScores

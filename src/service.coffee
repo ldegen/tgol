@@ -14,6 +14,8 @@ module.exports = (CGOL_HOME, settings)->
   NoSuchPatternError = require "./no-such-pattern-error"
   service = Express()
   Pattern = require "./pattern"
+  RatingManager = require "./rating-manager"
+  ratingManager = RatingManager repo
 
   # client code
   browserify.settings 'extensions', ['.coffee']
@@ -62,11 +64,9 @@ module.exports = (CGOL_HOME, settings)->
 
 
   service.get '/api/:tournamentName/leaderboard', (req, res, next)->
-    repo
-      .getScores(req.params.tournamentName)
+    ratingManager.getScores(req.params.tournamentName)
       .then (scores)->
-        res.status(200).json(scores)
-      .catch next
+        res.status(200).json scores
 
   service.get '/api/:tournament/patterns/:base64String', (req, res, next)->
     data = req.params.base64String
@@ -103,7 +103,9 @@ module.exports = (CGOL_HOME, settings)->
     repo
       .saveMatch(mdoc, req.params.tournamentName)
       .then ->
-        res.status(200).json mdoc
+        ratingManager.updateEloNumbers(mdoc, req.params.tournamentName)
+          .then ->
+            res.status(200).json mdoc
       .catch next
 
   service.get '/api/:tournamentName/matchmaker', (req, res, next)->
