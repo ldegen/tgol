@@ -34,7 +34,7 @@ module.exports = class Leaderboard extends React.Component
         @setState scores:JSON.parse resp.body
   render: ->
     div className: "leaderboard",
-      div className: "header",h1 "Leaderboard"
+      div className: "header",h1 "GoL-Contest Leaderboard"
       div className:"background_container",
         div className:"wrapper",
           table id:"leaderboard",className:"pure-table pure-table-horizontal",
