@@ -100,9 +100,11 @@ module.exports = class Arena extends React.Component
     request
       url: location.origin + "/api/froscon2016/matches"
       method:"POST"
-      json: mdoc: merge @state.match,
-        pattern1:score: @state.pattern1.score
-        pattern2:score: @state.pattern2.score
+      json: 
+        mdoc: merge @state.match,
+          pattern1:score: @state.pattern1.score
+          pattern2:score: @state.pattern2.score
+        pin:'t0ps3cr3t'
     .then =>@prepareMatch()
   componentDidMount: ->
     @prepareMatch()

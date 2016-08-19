@@ -212,17 +212,18 @@ describe "The Service", ->
       method:'POST'
       json:
         mdoc:
-         pattern1:
-           base64String:'kjafdscaASDasdkjaA'
-           translation:[-1,4]
-           variant:3
-           score:0
-         pattern2:
-           base64String:'ASDlkajsdazASDalksmAS'
-           translation:[5,-8]
-           variant:7
-           score:0
-         pin:673428
+          pattern1:
+            base64String:'kjafdscaASDasdkjaA'
+            translation:[-1,4]
+            variant:3
+            score:0
+          pattern2:
+            base64String:'ASDlkajsdazASDalksmAS'
+            translation:[5,-8]
+            variant:7
+            score:0
+          pin:673428
+        pin:'t0ps3cr3t'
     expect(request auth).to.be.fulfilled.then (resp)->
       expect(resp.statusCode).to.eql 200
       mfile = path.join CGOL_HOME, 'TestTournament', 'matches.log'
@@ -247,6 +248,7 @@ describe "The Service", ->
             modulo:2
             score:200
           pin:45678
+        pin:'t0ps3cr3t'
     expect(request auth).to.be.fulfilled.then ->
       expect(request "#{base}/api/TestTournament/leaderboard").to.be.fulfilled
         .then (resp)->
@@ -283,7 +285,38 @@ describe "The Service", ->
   #         variant:2
   #         score:200
 
-
+  it "will only persist a match if the pin is correct", ->
+    mdoc= 
+      pattern1:
+        base64String:'kjafdscaASDasdkjaA'
+        translation:[-1,4]
+        variant:3
+        score:0
+      pattern2:
+        base64String:'ASDlkajsdazASDalksmAS'
+        translation:[5,-8]
+        variant:7
+        score:0
+      pin:673428
+    auth = 
+      url:base+'/api/TestTournament/matches'
+      method:'POST'
+      json:
+        mdoc:
+          pattern1:
+            base64String:'kjafdscaASDasdkjaA'
+            translation:[-1,4]
+            variant:3
+            score:0
+          pattern2:
+            base64String:'ASDlkajsdazASDalksmAS'
+            translation:[5,-8]
+            variant:7
+            score:0
+          pin:673428
+        pin:'wr0ngP1n'
+    expect(request auth).to.be.fulfilled.then (resp)->
+      expect(resp.statusCode).to.eql 401
   xit "can request two equally strong patterns to form the next match", ->
     expect(request(base+'/api/TestTournament/matchmaker')).to.be.fulfilled.then (resp)->
       expect(resp.statusCode).to.eql 200

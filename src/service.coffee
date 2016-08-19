@@ -100,13 +100,17 @@ module.exports = (CGOL_HOME, settings)->
 
   service.post '/api/:tournamentName/matches', jsonParser, (req, res,next)->
     mdoc = req.body.mdoc
-    repo
-      .saveMatch(mdoc, req.params.tournamentName)
-      .then ->
-        ratingManager.updateEloNumbers(mdoc, req.params.tournamentName)
-          .then ->
-            res.status(200).json mdoc
-      .catch next
+    tpin = repo.getTournamentPin req.params.tournamentName
+    if tpin == req.body.pin
+      repo
+        .saveMatch(mdoc, req.params.tournamentName)
+        .then ->
+          ratingManager.updateEloNumbers(mdoc, req.params.tournamentName)
+            .then ->
+              res.status(200).json mdoc
+        .catch next
+    else
+      res.sendStatus 401
 
   service.get '/api/:tournamentName/matchmaker', (req, res, next)->
     Promise.all [
