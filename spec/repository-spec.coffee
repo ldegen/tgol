@@ -17,6 +17,14 @@ describe "The Repository",->
   b=undefined
   Utils = require "../src/util"
 
+  loadMatchesLog = (matchfile)->
+    fs
+      .readFileSync(matchfile)
+      .toString()
+      .split('\n')
+      .filter (s)->s.trim()
+      .map (line)->JSON.parse line
+
   beforeEach ->
     b = Builder()
     CGOL_HOME = tmpFileName @test
@@ -43,7 +51,7 @@ describe "The Repository",->
     expect(repository.saveTournament(tdoc)).to.be.fulfilled.then ->
       tdir = path.join CGOL_HOME,tdoc.name
       metafile = path.join tdir, 'meta.yaml'
-      matchdir = path.join tdir, 'matches'
+      matchfile = path.join tdir, 'matches.log'
       patterndir = path.join tdir, 'patterns'
       Promise.all [
         expect(loadYaml metafile).to.eql
@@ -51,7 +59,7 @@ describe "The Repository",->
           pin:tdoc.pin
 
         expect(loadYaml path.join patterndir, pdoc.mail+".yaml").to.eql pdoc for pdoc in tdoc.patterns
-        expect(loadYaml path.join matchdir, mdoc.id+".yaml").to.eql mdoc for mdoc in tdoc.matches
+        expect(loadMatchesLog matchfile).to.eql tdoc.matches
       ]
   it "can list the names of all tournaments", ->
     expect(Promise.all [
@@ -84,8 +92,7 @@ describe "The Repository",->
     tdoc = b.tournament()
     tdir = path.join CGOL_HOME, tdoc.name
     mkdir tdir
-    mdir = path.join tdir, 'matches'
-    mkdir mdir
+    mfile = path.join tdir, 'matches.log'
     mdoc =
       id:'123'
       pattern1:
@@ -100,8 +107,7 @@ describe "The Repository",->
         score:456
       pin:12345
     expect(repository.saveMatch(mdoc, tdoc.name)).to.be.fulfilled.then ->
-      mfile = path.join mdir, mdoc.id+'.yaml'
-      expect(loadYaml mfile).to.eql mdoc
+      expect(loadMatchesLog mfile).to.eql [mdoc]
 
 
   it "can load an array of all pattern documents from the file system", ->
@@ -217,9 +223,7 @@ describe "The Repository",->
         {name:'p1', mail:'m1'}
         {name:'p2', mail:'m2'}
       ]
-      matches:[
-        {id:'m1'}
-      ]
+      matches:[{}]
     expect(repository.saveTournament(tdoc)).to.be.fulfilled.then ->
       expect(repository.getPatternsAndMatchesForTournament(tdoc.name)).to.be.fulfilled.then (data)->
         Promise.all [
@@ -229,18 +233,13 @@ describe "The Repository",->
           expect(data.patterns).to.have.a.lengthOf 2
           expect(data.matches).to.have.a.lengthOf 1
           expect(data.patterns[0]).to.have.a.property('name').which.is.eql 'p1'
-          expect(data.matches[0]).to.have.a.property('id').which.is.eql 'm1'
         ]
 
 
   it "can get an array of all persited matches for a tournament", ->
     tdoc = b.tournament
       name:'TestTournament'
-      matches:[
-        'm1'
-        'm2'
-        'm3'
-      ]
+      matches:[{pattern1:variant:1},{pattern1:variant:2},{pattern1:variant:3}]
     expect(repository.saveTournament(tdoc)).to.be.fulfilled.then ->
       expect(repository.getMatchesForTournament(tdoc.name)).to.be.fulfilled.then (matches)->
         Promise.all([

@@ -22,6 +22,13 @@ describe "The Service", ->
   readFile = Promise.promisify fs.readFile
   Utils = require "../src/util"
   loadYaml = require "../src/load-yaml"
+  loadMatchesLog = (matchfile)->
+    fs
+      .readFileSync(matchfile)
+      .toString()
+      .split('\n')
+      .filter (s)->s.trim()
+      .map (line)->JSON.parse line
   Server = require "../src/server"
   CGOL_HOME = undefined
   builder = undefined
@@ -104,18 +111,16 @@ describe "The Service", ->
             pin:'98765'}
           ]
           matches:[
-            id:'match1'
             pattern1:
               base64String:'lkjfazakjds=='
-              translation:'1/1'
-              modulo:1
+              translation:[1,1]
+              variant:1
               score:100
             pattern2:
               base64String:'iuzaiszdgig=='
-              translation:'2/2'
-              modulo:2
+              translation:[2,2]
+              variant:2
               score:200
-            pin:45678
           ]
         repo.saveTournament(tdoc)
       .then -> log "saveTournament complete"
@@ -182,23 +187,21 @@ describe "The Service", ->
           name:'MyPattern'
           author:'John Doe'
           mail:'john@tarent.de'
-          elo:1000
           base64String:'lkjfazakjds=='
           pin:'12345'
       ]
   
   it "can persist an uploaded match", ->
     mdoc= 
-      id:'match_101'
       pattern1:
         base64String:'kjafdscaASDasdkjaA'
-        translation:'-1/4'
-        modulo:3
+        translation:[-1,4]
+        variant:3
         score:0
       pattern2:
         base64String:'ASDlkajsdazASDalksmAS'
-        translation:'5/-8'
-        modulo:7
+        translation:[5,-8]
+        variant:7
         score:0
       pin:673428
     auth = 
@@ -206,22 +209,22 @@ describe "The Service", ->
       method:'POST'
       json:
         mdoc:
-         id:'match_101'
          pattern1:
            base64String:'kjafdscaASDasdkjaA'
-           translation:'-1/4'
-           modulo:3
+           translation:[-1,4]
+           variant:3
            score:0
          pattern2:
            base64String:'ASDlkajsdazASDalksmAS'
-           translation:'5/-8'
-           modulo:7
+           translation:[5,-8]
+           variant:7
            score:0
          pin:673428
     expect(request auth).to.be.fulfilled.then (resp)->
       expect(resp.statusCode).to.eql 200
-      mfile = path.join CGOL_HOME, 'TestTournament', 'matches', mdoc.id+'.yaml'
-      expect(loadYaml mfile).to.eql mdoc
+      mfile = path.join CGOL_HOME, 'TestTournament', 'matches.log'
+      matches = loadMatchesLog mfile
+      expect(matches[matches.length-1]).to.eql mdoc
 
 
   it "can return scores for the matches to be displayed on a leaderboard", ->
@@ -245,22 +248,19 @@ describe "The Service", ->
         name:'MyPattern'
         author:'John Doe'
         mail:'john@tarent.de'
-        elo:1000
         base64String:'lkjfazakjds=='
         pin:'12345'
       expect(JSON.parse(resp.body).matches).to.include
-        id:'match1'
         pattern1:
           base64String:'lkjfazakjds=='
-          translation:'1/1'
-          modulo:1
+          translation:[1,1]
+          variant:1
           score:100
         pattern2:
           base64String:'iuzaiszdgig=='
-          translation:'2/2'
-          modulo:2
+          translation:[2,2]
+          variant:2
           score:200
-        pin:45678
 
 
   xit "can request two equally strong patterns to form the next match", ->

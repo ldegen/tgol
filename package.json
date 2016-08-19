@@ -59,7 +59,8 @@
     "react-router": "^2.6.0",
     "readdirp": "^2.1.0",
     "request": "^2.74.0",
-    "rimraf": "^2.5.3"
+    "rimraf": "^2.5.3",
+    "split": "^1.0.0"
   },
   "bundleDependencies": [
     "baconjs",

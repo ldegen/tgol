@@ -23,18 +23,16 @@ module.exports = ->
 
   match = ()->
     defaults=
-      id:"match_"+matches.length
       pattern1:
         base64String:'pattern1'
-        translation:"1/1"
-        modulo:0
+        translation:[1,1]
+        variant:0
         score:0
       pattern2:
         base64String:'pattern2'
-        translation:"2/2"
-        modulo:1
+        translation:[2,2]
+        variant:1
         score:0
-      pin:'t0ps3cr3t'
     doc = merge defaults, toArray arguments
     matches.push doc
     doc
@@ -43,7 +41,6 @@ module.exports = ->
       name:"pattern_"+patterns.length
       author:"someone_"+patterns.length
       mail:"gol"+patterns.length+"@tarent.de"
-      elo:100
       base64String:"abcdef"+patterns.length
       pin:'t0ps3cr3t'
     doc = merge defaults, toArray arguments
