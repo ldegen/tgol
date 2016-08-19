@@ -40,6 +40,10 @@ input[type=text], textarea, select,button {
   padding-top: 64px;
   padding-bottom: 64px;
 }
+.layout.arena {
+  padding-top: 0px;
+  padding-bottom: 100px;
+}
 .panel {
   padding-left: 1em;
   padding-right: 1em;
@@ -49,11 +53,17 @@ input[type=text], textarea, select,button {
   left:0px;
 }
 
+.arena.panel.bottom {
+  border-top: solid 1px green;
+  bottom:0px;
+  height:100px;
+}
 .panel.bottom {
   border-top: solid 1px green;
   bottom:20px;
   height:64px;
 }
+
 .commands {
   height:100%;
   margin: 10px 0;
@@ -177,3 +187,30 @@ li {
 }
 
 
+.stats .player-1 {
+    background-color: blue;
+}
+.stats .player-2 {
+    background-color: red;
+    float:right;
+}
+.stats .player-score {
+  font-size:42px;
+  float:right;
+}
+.stats .player-name {
+  float:left;
+}
+.stats > div {
+    float: left;
+    padding: 10px;
+    width: 500px;
+    margin: 5px;
+}
+.stats .generation {
+  font-size:36px
+}
+
+.stats .generation .label{
+  margin-right:25px;
+}
