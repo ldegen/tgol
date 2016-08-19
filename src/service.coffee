@@ -130,9 +130,6 @@ module.exports = (CGOL_HOME, settings)->
       .catch next
 
 
-  # FIXME: This won't do. Routing logic needs to be done client-side.
-  service.get '/kiosk/leaderboard', (req, res) ->
-    res.sendFile path.resolve __dirname, '..', 'static', 'leaderboard.html'
 
 
   service.get '/landingpage', (req, res)->

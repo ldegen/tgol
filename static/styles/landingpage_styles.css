@@ -1,212 +1,52 @@
-/*******************/
-/*table of content*/
-/*******************/
-
-/* 1. browser resest */
-/* 2. global
-/* 3. links
-/* 4. gol landingpage
-/* 5. footer
-/* 6. leaderboard
-/* 7. tables
-/* 8. media querie for disply < 800px
-
-
-
-/* 1. browser resest
-   ========================================================================== */
-
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-}
-
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-    display: block;
-}
-
-body {
-    line-height: 1;
-}
-
-ol, ul {
-    list-style: none;
-}
-
-blockquote, q {
-    quotes: none;
-}
-
-blockquote:before, blockquote:after,
-q:before, q:after {
-    content: '';
-    content: none;
-}
-
-table {
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-
-/* 2. global
-   ========================================================================== */
-
-html {
-    min-height: 100%;
-    position: relative;
-}
-
-body {
-    color: #333333;
-    font-family: Verdana, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.42em;
-    margin: 0 0 170px;
-}
-
-
-
-
-/* 3. links
-   ========================================================================== */
-
-a, a:visited {
-    color: #cc0000;
-}
-
-a:hover {
-    color: #707070;
-}
-
-
-
-
-
-/* 4. gol landingpage
-   ========================================================================== */
-
-.background_container {
+.leaderboard .background_container {
     border-top: 6px solid #cc0000;
 }
 
-.wrapper {
+.leaderboard .wrapper {
     margin: 0 auto 90px;
-    width: 60%;
+    width: 50%;
 }
 
-img#logo {
+.leaderboard img#logo {
     display: block;
     margin: 80px auto 90px;
 }
 
-.text_container p {
+.leaderboard .text_container p {
     margin-bottom: 8px;
 }
 
-.text_container .bold {
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 15px;
-}
-
-.text_container p.bold {
-    font-size: 20px;
-}
-
-h1.ablauf  {
-    font-size: 14px;
-    margin-top: 30px;
-    margin-bottom: 10px;
-
-}
-
-
-.text_container p:last-of-type {
+.leaderboard .text_container p:last-of-type {
     margin-bottom: 50px;
 
 }
 
-.text_container.flex {
-    margin: 0 0 50px 0;
-    justify-content: flex-start;
-}
-
-.text_container.flex .instruction {
-    margin-left: 20px;
-    margin-top: 8px;
-}
-
-
-.text_container.flex h1 {
-    font-size: 12px;
-    margin-top: 0;
-    margin-bottom: 10px;
-}
-
-.image {
-    flex-shrink: 0;
-}
-
-.image img {
-    width: 100%;
-}
-
-
-
-.flex {
+.leaderboard .flex {
     display: flex;
     justify-content: space-between;
 }
 
-.links {
-    margin-top: 50px;
-}
-
-.links > .link_container_btn {
-    margin-top: 0px;
+.leaderboard .links > .link_container:last-of-type {
+    margin-top: 20px;
     text-align: center;
 }
 
-.links > .link_container_btn:last-of-type {
-    margin:0;
-    text-align: center;
-}
-
-
-.btn {
+.leaderboard .btn {
     background: #f00;
     background: -webkit-linear-gradient(#f00, #960000);
     background: linear-gradient(#f00, #960000);
     border-radius: 5px;
     color: #fff;
     display: inline-block;
-    padding: 8px 25px;
+    padding: 8px 20px;
     font: normal 700 24px/1 "Open Sans", sans-serif;
     text-align: center;
     text-shadow: 1px 1px 0 #666;
     text-decoration: inherit;
-    margin-top: 40px;
+    margin-top: 50px;
 }
 
-.link_container_btn a {
+.leaderboard .btn:hover {
     color: #fff;
 }
 
@@ -226,7 +66,7 @@ ol {
 /* 5. footer
    ========================================================================== */
 
-footer {
+.leaderboard footer {
     background-color: #cc0000;
     position: absolute;
     left: 0;
@@ -236,7 +76,7 @@ footer {
 
 }
 
-p.footer_paragraph {
+.leaderboard p.footer_paragraph {
     color: #fff;
     font-size: 15px;
     margin: 0px auto;
@@ -254,7 +94,7 @@ p.footer_paragraph {
 /* 6. leaderboard
    ========================================================================== */
 
-h1 {
+.leaderboard h1 {
     color: #c00;
     font-size: 36px;
     font-weight: 600;
@@ -279,17 +119,17 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
  * Remove most spacing between table cells.
  */
 
-table {
+.leaderboard table {
     border-collapse: collapse;
     border-spacing: 0;
 }
 
-td,
-th {
+.leaderboard td,
+.leaderboard th {
     padding: 0;
 }
 
-.pure-table {
+.leaderboard .pure-table {
     /* Remove spacing between table cells (from Normalize.css) */
     border-collapse: collapse;
     border-spacing: 0;
@@ -298,15 +138,15 @@ th {
     width: 100%;
 }
 
-.pure-table caption {
+.leaderboard .pure-table caption {
     color: #000;
     font: italic 85%/1 arial, sans-serif;
     padding: 1em 0;
     text-align: center;
 }
 
-.pure-table td,
-.pure-table th {
+.leaderboard .pure-table td,
+.leaderboard .pure-table th {
     border-left: 1px solid #cbcbcb;/*  inner column border */
     border-width: 0 0 0 1px;
     font-size: inherit;
@@ -317,47 +157,47 @@ th {
 
 /* Consider removing this next declaration block, as it causes problems when
 there's a rowspan on the first cell. Case added to the tests. issue#432 */
-.pure-table td:first-child,
-.pure-table th:first-child {
+.leaderboard .pure-table td:first-child,
+.leaderboard .pure-table th:first-child {
     border-left-width: 0;
 }
 
-.pure-table thead {
+.leaderboard .pure-table thead {
     background-color: #e0e0e0;
     color: #000;
     text-align: left;
     vertical-align: bottom;
 }
 
-.pure-table td {
+.leaderboard .pure-table td {
     background-color: transparent;
 }
 
-tr:nth-of-type(even) td {
+.leaderboard tr:nth-of-type(even) td {
     background-color: #f2f2f2;
 }
 
 /* nth-child selector for modern browsers */
-.pure-table-striped tr:nth-child(2n-1) td {
+.leaderboard .pure-table-striped tr:nth-child(2n-1) td {
     background-color: #f2f2f2;
 }
 
 /* BORDERED TABLES */
-.pure-table-bordered td {
+.leaderboard .pure-table-bordered td {
     border-bottom: 1px solid #cbcbcb;
 }
-.pure-table-bordered tbody > tr:last-child > td {
+.leaderboard .pure-table-bordered tbody > tr:last-child > td {
     border-bottom-width: 0;
 }
 
 /* HORIZONTAL BORDERED TABLES */
 
-.pure-table-horizontal td,
-.pure-table-horizontal th {
+.leaderboard .pure-table-horizontal td,
+.leaderboard .pure-table-horizontal th {
     border-width: 0 0 1px 0;
     border-bottom: 1px solid #cbcbcb;
 }
-.pure-table-horizontal tbody > tr:last-child > td {
+.leaderboard .pure-table-horizontal tbody > tr:last-child > td {
     border-bottom-width: 0;
 }
 
@@ -378,26 +218,26 @@ tr:nth-of-type(even) td {
 
 @media (max-width: 799px) {
 
-    .wrapper {
+    .leaderboard .wrapper {
         margin: 0 auto 90px;
         width: 100%;
     }
 
-   .text_container p {
+   .leaderboard .text_container p {
         margin-left: 10%;
         margin-right: 10%;
     }
 
-    .links {
+    .leaderboard .links {
         margin-left: 10%;
         margin-right: 10%;
     }
 
-    h1 {
+    .leaderboard h1 {
         margin: 80px 10% 30px;
     }
 
-    .pure-table {
+    .leaderboard .pure-table {
         margin: 0 10% 0 10%;
         width: 80%;
     }

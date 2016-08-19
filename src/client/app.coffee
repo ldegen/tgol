@@ -4,7 +4,7 @@ class App extends Component
   constructor: (props)->
     super props
   render: ->
-    div( className:"wrapper",
+    div( className:"app",
       @props.children
     )
 module.exports =   App

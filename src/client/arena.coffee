@@ -115,7 +115,7 @@ module.exports = class Arena extends React.Component
     @prepareMatch()
 
   render: ->
-    (div className:"layout arena",
+    (div className:"layout arena application",
       #(div id:"top-panel", className:"panel top",
         #(Panel bus:@bus, commands: @topCommands())
       #)

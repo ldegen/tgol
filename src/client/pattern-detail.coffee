@@ -50,7 +50,9 @@ module.exports = class PatternDetail extends React.Component
       targetState.enter?.call this,data
 
   valid: -> @steps[@state.status].valid.call this
-  render: ->@steps[@state.status].render.call this
+  render: ->
+    div className: "pattern-details application",
+      @steps[@state.status].render.call this
 
   labelValue: (label, value)->
     div

@@ -2,6 +2,7 @@
 Editor = require "./editor"
 Arena = require "./arena"
 App = require "./app"
+Leaderboard = require "./leaderboard"
 PatternDetail = require "./pattern-detail"
 ready = require "document-ready"
 {Router, Route, browserHistory} = require "react-router"
@@ -23,6 +24,9 @@ ready ->
     ,
       path:"kiosk/arena"
       component: Arena
+    ,
+      path:"kiosk/leaderboard"
+      component: Leaderboard
     ]
   ]
   render(

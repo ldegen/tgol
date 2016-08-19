@@ -1,25 +1,12 @@
-html, body, .layout {
-  position:relative;
-  top:0px;
-  left:0px;
-  width:100%;
-  height:100%;
-  box-sizing:border-box;
-  margin: 0px;
-  padding: 0px;
+.application {
   background-color:black;
   color: white;
   font-size: 16px;
 }
-body * {
-  margin: 0;
-  padding: 0;
-  font-family: "Lucida Grande", helvetica, sans-serif;
-}
-input[disabled], button[disabled], select[disabled] {
+.application input[disabled], button[disabled], select[disabled] {
   opacity: 0.3;
 }
-input[type=text], textarea, select,button {
+.application input[type=text], textarea, select,button {
   border: #fff 1px solid;
   font-size: 15px;
   line-height: 1.2em;
@@ -31,20 +18,26 @@ input[type=text], textarea, select,button {
   padding: 0.5em;
 
 }
-
-.command {
+.application {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+.application .command {
   height: 100%;
   margin-right: 25px;
 }
-.layout {
+.layout.application  {
   padding-top: 64px;
   padding-bottom: 64px;
+
 }
-.layout.arena {
+.layout.application.arena {
   padding-top: 0px;
   padding-bottom: 100px;
 }
-.panel {
+.application .panel {
   padding-left: 1em;
   padding-right: 1em;
   width:100%;
@@ -58,38 +51,39 @@ input[type=text], textarea, select,button {
   bottom:0px;
   height:100px;
 }
-.panel.bottom {
+.application .panel.bottom {
   border-top: solid 1px green;
   bottom:20px;
   height:64px;
 }
 
-.commands {
+.application .commands {
   height:100%;
   margin: 10px 0;
 }
-.command {
+.application .command {
   height:100%;
 }
-.panel.top{
+.application .panel.top{
   border-bottom: solid 1px green;
   top:0px;
   height:64px;
 }
-.main {
+.application .main {
   position:relative;
   top:0px;
   left:0px;
   width:100%;
   height:100%;
 }
-.wrapper {
+
+.application .wrapper {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
   margin: 0;
 }
-svg {
+.application svg {
   /*border: solid 1px white;*/
   box-sizing:border-box;
   margin: 0px;
@@ -97,71 +91,71 @@ svg {
   width:100%;
   height:100%;
 }
-.form {
-       padding: 20px;
+.application .form {
+  padding: 20px;
 }
-.cell {
+.application .cell {
   fill: grey;
   stroke: white;
 }
-.cell.black {
+.application .cell.black {
   fill: red;
   stroke: white;
 }
-.cell.white {
+.application .cell.white {
   fill: blue;
   stroke: white;
 }
 
-.cell.selected {
+.application .cell.selected {
   fill:yellow;
 }
-.pattern .cell {
+.application .pattern .cell {
   fill: yellow;
   opacity:0.5;
   stroke:yellow;
   stroke-width:0.2px;
   stroke-dasharray:0.1;
 }
-.debug {
+.application .debug {
   fill:none;
   stroke: red;
 }
-.debug.window {
+.application .debug.window {
   stroke: red;
 }
 
-.debug.selection {
+.application .debug.selection {
   stroke: yellow;
 }
-#qr-code {
+.application #qr-code {
   height:150px;
   position:absolute;
   bottom:0px;
   right:0px;
 }
-#qr-code svg {
+.application #qr-code svg {
   height:90%;
   background:white;
 }
-#qr-code path {
+.application #qr-code path {
   fill: green;
   stroke: none;
 }
 
-.label-value {
+.application .label-value {
   margin-bottom: 10px;
 }
 
-.label-value:first-of-type {
+.application .label-value:first-of-type {
   margin-bottom: 15px;
 }
 
-.label-value:last-of-type {
+.application .label-value:last-of-type {
   margin-bottom: 25px;
 }
 
-button {
+.application button {
   background:    #8a8a8a;
   background:    -webkit-linear-gradient(#8a8a8a, #5c5c5c);
   background:    linear-gradient(#8a8a8a, #5c5c5c);
@@ -177,40 +171,46 @@ button {
 }
 
 
-li {
+.application li {
   margin-bottom: 15px;
 }
 
 
-.agree {
+.application .agree {
   margin-bottom: 20px;
 }
 
 
-.stats .player-1 {
-    background-color: blue;
+.application .stats .player-1 {
+  background-color: blue;
 }
-.stats .player-2 {
-    background-color: red;
-    float:right;
+.application .stats .player-2 {
+  background-color: red;
+  float:right;
 }
-.stats .player-score {
+.application .stats .player-score {
   font-size:42px;
   float:right;
 }
-.stats .player-name {
+.application .stats .player-name {
   float:left;
 }
-.stats > div {
-    float: left;
-    padding: 10px;
-    width: 500px;
-    margin: 5px;
+.application .stats > div {
+  float: left;
+  padding: 10px;
+  width: 500px;
+  margin: 5px;
 }
-.stats .generation {
+.application .stats .generation {
   font-size:36px
 }
 
-.stats .generation .label{
+.application .stats .generation .label{
   margin-right:25px;
+}
+.application h1 {
+  display: block;
+  font-size: 2em;
+  line-height: 1.17;
+  font-weight: bold;
 }
