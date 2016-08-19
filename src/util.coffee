@@ -28,12 +28,12 @@ module.exports=
       else throw new Error "Bad input: #{input}"
   encodeCoordinates: (cells)->
     coords = Array::concat.apply [], cells
-    buf = new Buffer Uint8Array.from coords
+    buf = new Buffer new Uint8Array coords
     deflate buf
       .then (zbuf)->zbuf.toString "base64"
   encodeCoordinatesSync: (cells)->
     coords = Array::concat.apply [], cells
-    buf = new Buffer Uint8Array.from coords
+    buf = new Buffer new Uint8Array coords
     zbuf = zlib.deflateSync buf
     zbuf.toString "base64"
 
@@ -41,10 +41,10 @@ module.exports=
     buf = new Buffer s, "base64"
     inflate buf
       .then (buf)->
-        flatCoords = Uint8Array.from buf
+        flatCoords = new Uint8Array buf
         [flatCoords[2*i],flatCoords[2*i+1]] for i in [0...flatCoords.length/2]
   decodeCoordinatesSync: (s)->
     zbuf = new Buffer s, "base64"
     buf = zlib.inflateSync zbuf
-    flatCoords = Uint8Array.from buf
+    flatCoords = new Uint8Array buf
     [flatCoords[2*i],flatCoords[2*i+1]] for i in [0...flatCoords.length/2]
