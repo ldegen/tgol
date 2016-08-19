@@ -90,7 +90,10 @@ describe "The rating Manager",->
     expect(manager.updateEloNumbers(mdoc1, 'TestTournament')).to.be.fulfilled.then ->
       expect(manager.updateEloNumbers(mdoc2, 'TestTournament')).to.be.fulfilled.then ->
         expect(manager.updateEloNumbers(mdoc3, 'TestTournament')).to.be.fulfilled.then ->
-          expect(manager.eloNumbers[pdoc.base64String]).to.be.at.least 1040
+          Promise.all([
+            expect(manager.eloNumbers[pdoc.base64String]).to.be.at.least 1040
+            expect(manager.games[pdoc.base64String]).to.eql 3
+          ])
 
   it "can return the scores for the tournament", ->
     expect(manager.updateEloNumbers(mdoc1, 'TestTournament')).to.be.fulfilled.then ->
@@ -102,6 +105,7 @@ describe "The rating Manager",->
             res= 
               name:'Pattern1'
               author:'John Doe'
+              games:3
               score:1045
               base64String:'pattern1String'
             expect(scores).to.include res 

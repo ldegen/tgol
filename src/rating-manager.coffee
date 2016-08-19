@@ -1,9 +1,11 @@
 module.exports = (repo)->
   Promise = require "bluebird"
+  Repository = require "./repository"
   Elo = require "elo-rank"
   elo = Elo()
   scores={}
   eloNumbers={}
+  games = {}
   
 
   updateEloNumbers = (mdoc, tournamentName)->
@@ -14,7 +16,8 @@ module.exports = (repo)->
             eloNumbers[match.pattern1.base64String] = 1000
           
           if eloNumbers[match.pattern2.base64String] == undefined
-            eloNumbers[match.pattern2.base64String] = 1000
+            eloNumbers[match.pattern2.base64String] = 1000     
+        updateGames(mdoc)
 
         elo1 = eloNumbers[mdoc.pattern1.base64String]
         elo2 = eloNumbers[mdoc.pattern2.base64String]
@@ -29,37 +32,37 @@ module.exports = (repo)->
 
 
   getScores = (tournamentName)->
-    repo.getMatchesForTournament(tournamentName)
-      .then (matches)->
-        pairs = ([key,score] for key,score of eloNumbers)
-        entryPromises = pairs.map ([key,score])-> 
-          repo
-            .getPatternByBase64ForTournament key, tournamentName
-            .then (pdoc)-> 
-              entry = {}
-              entry['name'] = pdoc.name
-              entry['author'] = pdoc.author
-              entry['score'] = score
-              entry['base64String'] = pdoc.base64String
-              entry
-        Promise.all entryPromises
+    pairs = ([key,score] for key,score of eloNumbers)
+    entryPromises = pairs.map ([key,score])->
+      repo
+        .getPatternByBase64ForTournament key, tournamentName
+        .then (pdoc)-> 
+          entry = {}
+          entry['name'] = pdoc.name
+          entry['author'] = pdoc.author
+          entry['games'] = games[pdoc.base64String]
+          entry['score'] = score
+          entry['base64String'] = pdoc.base64String
+          entry
+        .catch (e)->
+          console.log e
+          return undefined
+    Promise.all entryPromises
        
+  updateGames = (match)->
+    if games[match.pattern1.base64String] == undefined
+      games[match.pattern1.base64String] = 1
+    else
+      games[match.pattern1.base64String] += 1
+    
+    if games[match.pattern2.base64String] == undefined
+      games[match.pattern2.base64String] = 1
+    else
+      games[match.pattern2.base64String] += 1
 
-  calculateScores = (matches)->
-    for match in matches
-        if scores[match.pattern1.base64String] == undefined 
-          scores[match.pattern1.base64String] = 0
-          scores[match.pattern1.base64String] += match.pattern1.score
-        else
-          scores[match.pattern1.base64String] += match.pattern1.score
-        
-        if scores[match.pattern2.base64String] == undefined 
-          scores[match.pattern2.base64String] = 0
-          scores[match.pattern2.base64String] += match.pattern2.score
-        else
-          scores[match.pattern2.base64String] += match.pattern2.score
   
   updateEloNumbers:updateEloNumbers
   scores:scores
   eloNumbers:eloNumbers
   getScores:getScores
+  games:games

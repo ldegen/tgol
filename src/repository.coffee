@@ -60,16 +60,16 @@ module.exports = (CGOL_HOME, settings)->
   saveMatch = (mdoc, tournamentName)->
     tdir = path.join CGOL_HOME, tournamentName
     mfile = path.join tdir, 'matches.log'
-    appendFile mfile, (JSON.stringify mdoc)+"\n"
-      .then -> cachedTournament tournamentName
+    cachedTournament tournamentName
       .then(
-        (tournament)-> 
+        (tournament)->
           addCachedMatch tournament, mdoc
         (err)-> 
           console.log "error", err.stack
           throw err
-      ) 
-
+      ).then -> 
+        appendFile mfile, (JSON.stringify mdoc)+"\n"
+        
 
   saveTournament = (tdoc)->
     tdir = path.join CGOL_HOME,tdoc.name
@@ -145,21 +145,6 @@ module.exports = (CGOL_HOME, settings)->
         data
 
 
-  getScores = (tournamentName)->
-    Promise.resolve [
-      name: 'Roman'
-      games: 3
-      score: 234
-      mail: 'romanabendroth@t-online.de'
-    ,
-      name: 'Tester1'
-      games: 4
-      score: 456
-      mail: 'service-spec@tarent.de'
-    ]
-        
-
-
   allTournaments: allTournaments
   saveTournament: saveTournament
   savePattern: savePattern
@@ -169,4 +154,3 @@ module.exports = (CGOL_HOME, settings)->
   getPatternByEmailForTournament:getPatternByEmailForTournament
   getPatternsAndMatchesForTournament:getPatternsAndMatchesForTournament
   getMatchesForTournament:getMatchesForTournament
-  getScores:getScores

@@ -159,5 +159,5 @@ module.exports = (CGOL_HOME, settings)->
   # Useful to speed up integration tests.
   service.switchWorkspace  = (path)->
     repo = Repository path, settings
-
+    ratingManager = RatingManager repo
   service

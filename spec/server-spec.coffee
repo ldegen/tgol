@@ -179,10 +179,8 @@ describe "The Service", ->
 
   it "can request if a pattern has already been uploaded to a tournament", ->
     expect(request(base+'/api/TestTournament/patterns/lkjtewqfsdufafazakjds==')).to.be.fulfilled.then (resp)->
-      Promise.all [
-        expect(resp.statusCode).to.eql 404
-      ]
-
+      expect(resp.statusCode).to.eql 404
+      
 
   it "can also request this and get the already uploaded pattern", ->
     expect(request(base+'/api/TestTournament/patterns/lkjfazakjds==')).to.be.fulfilled.then (resp)->
@@ -238,7 +236,6 @@ describe "The Service", ->
       method:'POST'
       json:
         mdoc:
-          id:'match2'
           pattern1:
             base64String:'lkjfazakjds=='
             translation:'1/1'
@@ -250,7 +247,6 @@ describe "The Service", ->
             modulo:2
             score:200
           pin:45678
-    # console.log auth
     expect(request auth).to.be.fulfilled.then ->
       expect(request "#{base}/api/TestTournament/leaderboard").to.be.fulfilled
         .then (resp)->
@@ -261,30 +257,31 @@ describe "The Service", ->
           expect(JSON.parse(resp.body)[0]).to.be.an('object').which.has.a.property('games')
         
 
-  it "can get a collection of all patterns and matches in a tournament", ->
-    expect(request(base+'/api/TestTournament')).to.be.fulfilled.then (resp)->
-      expect(resp.statusCode).to.eql 200
-      expect(JSON.parse resp.body).to.have.a.property('patterns').which.is.an('array')
-      expect(JSON.parse resp.body).to.have.a.property('matches').which.is.an('array')
-      expect(JSON.parse(resp.body).patterns).to.have.a.lengthOf 3
-      expect(JSON.parse(resp.body).matches).to.have.a.lengthOf 1
-      expect(JSON.parse(resp.body).patterns).to.include
-        name:'MyPattern'
-        author:'John Doe'
-        mail:'john@tarent.de'
-        base64String:'lkjfazakjds=='
-        pin:'12345'
-      expect(JSON.parse(resp.body).matches).to.include
-        pattern1:
-          base64String:'lkjfazakjds=='
-          translation:[1,1]
-          variant:1
-          score:100
-        pattern2:
-          base64String:'iuzaiszdgig=='
-          translation:[2,2]
-          variant:2
-          score:200
+  # it "can get a collection of all patterns and matches in a tournament", ->
+  #   expect(request(base+'/api/TestTournament')).to.be.fulfilled.then (resp)->
+  #     expect(resp.statusCode).to.eql 200
+  #     expect(JSON.parse resp.body).to.have.a.property('patterns').which.is.an('array')
+  #     expect(JSON.parse resp.body).to.have.a.property('matches').which.is.an('array')
+  #     expect(JSON.parse(resp.body).patterns).to.have.a.lengthOf 3
+  #     expect(JSON.parse(resp.body).matches).to.have.a.lengthOf 1
+  #     expect(JSON.parse(resp.body).patterns).to.include
+  #       name:'MyPattern'
+  #       author:'John Doe'
+  #       mail:'john@tarent.de'
+  #       base64String:'lkjfazakjds=='
+  #       pin:'12345'
+  #     expect(JSON.parse(resp.body).matches).to.include
+  #       id:'match1'
+  #       pattern1:
+  #         base64String:'lkjfazakjds=='
+  #         translation:[1,1]
+  #         variant:1
+  #         score:100
+  #       pattern2:
+  #         base64String:'iuzaiszdgig=='
+  #         translation:[2,2]
+  #         variant:2
+  #         score:200
 
 
   xit "can request two equally strong patterns to form the next match", ->

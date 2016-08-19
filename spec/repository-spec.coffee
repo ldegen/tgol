@@ -203,17 +203,17 @@ describe "The Repository",->
        ]
 
 
-  it "can get an array of player information for the leaderboard", ->
-    tdoc = b.tournament()
-    tdir = path.join CGOL_HOME, tdoc.name
-    mdir = path.join tdir, 'matches'
-    expect(
-      mkdir(mdir).then -> repository.getScores(tdoc.name)
-    ).to.be.fulfilled.then (scores)->
-      Promise.all [
-        expect(scores).to.be.an('array')
-        expect(scores[0]).to.have.a.property('score')
-      ]
+  # it "can get an array of player information for the leaderboard", ->
+  #   tdoc = b.tournament()
+  #   tdir = path.join CGOL_HOME, tdoc.name
+  #   mdir = path.join tdir, 'matches'
+  #   expect(
+  #     mkdir(mdir).then -> repository.getScores(tdoc.name)
+  #   ).to.be.fulfilled.then (scores)->
+  #     Promise.all [
+  #       expect(scores).to.be.an('array')
+  #       expect(scores[0]).to.have.a.property('score')
+  #     ]
 
 
   it "can get a collection of patterns and matches for a tournament", ->
