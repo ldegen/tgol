@@ -26,6 +26,7 @@ module.exports = (repo)->
           
           if eloNumbers[match.pattern2.base64String] == undefined
             eloNumbers[match.pattern2.base64String] = 1000     
+          updateScores(match)
           updateGames(match)
         init = false
 

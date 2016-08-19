@@ -200,6 +200,7 @@ module.exports = class PatternDetail extends React.Component
 
         div(
           className: "form"
+          h1 "Dein Pattern nimmt jetzt am Turnier teil!"
           h1 "Pattern: #{@state.name}"
           h2 "by: #{@state.author}"
 
@@ -252,7 +253,7 @@ module.exports = class PatternDetail extends React.Component
          "submitting"
       abort: -> "loading"
       valid: ->
-        @state.mail.trim() and @state.pin.trim() and @state.agree
+        @state.mail.trim() and @state.pin.trim()
       render: ->
         div(
           className: "form"
