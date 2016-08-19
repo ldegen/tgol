@@ -34,9 +34,9 @@ module.exports = class Leaderboard extends React.Component
         @setState scores:JSON.parse resp.body
   render: ->
     div className: "leaderboard",
+      div className: "header",h1 "Leaderboard"
       div className:"background_container",
         div className:"wrapper",
-          h1 "Leaderboard"
           table id:"leaderboard",className:"pure-table pure-table-horizontal",
             thead className:"leaderHead",
               tr className:"leaderHeadRow",
@@ -46,9 +46,9 @@ module.exports = class Leaderboard extends React.Component
                 th className:"leaderHeadCell", "Pattern"
             tbody className:"leaderBody",
               (@tableRow row for row in @state.scores)
-          footer(
-            p className:"footer_paragraph",
-              "Made by"
-              img src:"/images/tarentLogoWeiss_12px.png"
-              "2016"
-          )
+        footer(
+          p className:"footer_paragraph",
+            "Made by"
+            img src:"/images/tarentLogoWeiss_12px.png"
+            "2016"
+        )
