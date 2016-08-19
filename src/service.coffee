@@ -131,8 +131,8 @@ module.exports = (CGOL_HOME, settings)->
 
 
 
-  service.get '/landingpage', (req, res)->
-    res.sendFile path.resolve __dirname, '..', 'static', 'landingpage.html'
+  #service.get '/landingpage', (req, res)->
+    #res.sendFile path.resolve __dirname, '..', 'static', 'landingpage.html'
 
   # for everything else, just return index.html
   # so client-side routing works smoothly
