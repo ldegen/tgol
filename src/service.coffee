@@ -129,12 +129,6 @@ module.exports = (CGOL_HOME, settings)->
         res.status(200).json pair
       .catch next
 
-  service.get '/api/:tournamentName', (req, res, next)->
-    repo
-      .getPatternsAndMatchesForTournament(req.params.tournamentName)
-      .then (data)->
-        res.status(200).json data
-      .catch next
 
 
 
