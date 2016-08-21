@@ -260,6 +260,7 @@ ol {
     .leaderboard .wrapper {
       margin: 0 auto 90px;
       width: 100%;
+      overflow: scroll;
     }
 
     .leaderboard .text_container p {
