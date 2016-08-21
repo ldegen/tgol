@@ -5,6 +5,8 @@ request = Promise.promisify require "request"
 Util = require "../util"
 Visualization = factory require "./visualization"
 Bbox = require "../bbox"
+{Link} =  require "react-router"
+Link = factory Link
 module.exports = class Leaderboard extends React.Component
 
 
@@ -24,13 +26,18 @@ module.exports = class Leaderboard extends React.Component
       )
       td row.games
       td row.score
-      td Visualization
-        livingCells:cells
-        mode:"play"
-        window: new Bbox cells 
+      td(
+        Link to: "/patterns/"+encodeURIComponent( row.base64String),
+          Visualization
+            livingCells:cells
+            mode:"play"
+            window: new Bbox cells 
+      )
   componentDidMount: ->
-    setInterval @updateScores, 1000
-
+    @updateScores()
+    @_interval = setInterval @updateScores, 1000
+  componentWillUnmount: ->
+    clearInterval @_interval
   updateScores: =>
     request location.origin + "/api/froscon2016/leaderboard"
       .then (resp)=>

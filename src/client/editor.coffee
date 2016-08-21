@@ -4,6 +4,7 @@ Visualization = factory require "./visualization"
 Panel = factory require "./panel"
 Dispatcher = require "../dispatcher"
 Board = require "../board"
+Bbox = require "../bbox"
 Pattern = require "../pattern"
 class Editor extends React.Component
   constructor: (props)->
@@ -173,9 +174,22 @@ class Editor extends React.Component
   componentDidMount: ->
     console.log "mounted"
     s = localStorage.getItem "tgol.editor.state"
+    p = @props.location.query.p
     if s?
       console.log "loading", s
-      @setState JSON.parse s
+      newState = JSON.parse s
+    else
+      newState = 
+        livingCells:@livingCells
+
+
+    if p?
+      buf=new Pattern(p)
+      bbox = new Bbox newState.livingCells.concat buf.cells
+      newState.pattern = buf.cells
+      newState.mode = "pattern"
+      newState.window = bbox
+    @setState newState
 
   componentWillUnmount: ->
     s = JSON.stringify @state

@@ -28,6 +28,8 @@ module.exports = class Arena extends React.Component
     @setState generation:0, @tick
 
   _key: (board)->
+    box = board.bbox()
+    return "" if not box?
     {left, top} = board.bbox()
     board.livingCells()
       .map ([x,y,z])->[x-left, y-top,z]
