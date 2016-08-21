@@ -1,7 +1,13 @@
 module.exports = ->
   WeightedRandom = require "./weighted-random"
+  merge = require "deepmerge"
 
-
+  withoutEmailOrPin = (pdoc0)->
+    pdoc = merge pdoc0, {}
+    delete pdoc.mail
+    delete pdoc.pin
+    pdoc
+  
   matchForElo = (patterns, matches)->
     i = 0
     while i < 10
@@ -28,7 +34,7 @@ module.exports = ->
       pattern2 = eqlPatterns[eqlWr()]
 
       if pattern1.base64String != pattern2.base64String
-        return [pattern1, pattern2]
+        return [pattern1, pattern2].map withoutEmailOrPin
       else
         i++
     throw new Error('No matching pattern could be found :(')
@@ -57,4 +63,4 @@ module.exports = ->
       j= rnd()
     console.log "j", j 
 
-    [patterns[i], patterns[j]]
+    [patterns[i], patterns[j]].map withoutEmailOrPin

@@ -3,10 +3,16 @@
   color: white;
   font-size: 16px;
 }
-.application input[disabled], button[disabled], select[disabled] {
+.application input[disabled], 
+.application button[disabled], 
+.application select[disabled] {
   opacity: 0.3;
 }
-.application input[type=text], textarea, select,button {
+.application input[type=text], 
+.application textarea, 
+.application select,
+.application button,
+.application a.button {
   border: #fff 1px solid;
   font-size: 15px;
   line-height: 1.2em;
@@ -155,7 +161,8 @@
   margin-bottom: 25px;
 }
 
-.application button {
+.application button, 
+.application a.button {
   background:    #8a8a8a;
   background:    -webkit-linear-gradient(#8a8a8a, #5c5c5c);
   background:    linear-gradient(#8a8a8a, #5c5c5c);

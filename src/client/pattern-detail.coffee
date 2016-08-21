@@ -86,7 +86,9 @@ module.exports = class PatternDetail extends React.Component
       value:"name"
       onClick: @handleNavEvent name
     button opts, label
-
+  linkButton: (to,label,opts={})->
+    opts = to:to, className: "button"
+    Link opts, label
   
 
   steps:
@@ -212,6 +214,7 @@ module.exports = class PatternDetail extends React.Component
             @labelValue "Cells:", pattern.cells.length
             @labelValue "Dimensions:", pattern.bbox().width()+" x "+pattern.bbox().height()
             @navButton "qr", "QR-Code anzeigen"
+            @linkButton "/editor?p=#{encodeURIComponent @props.params.spec}", "Kopieren"
         )
     confirmOverwrite:
       submit: ()->
