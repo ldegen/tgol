@@ -56,6 +56,9 @@ class Visualiztation extends React.Component
       bus = @props.bus
       svg = d3.select root
         .append "svg"
+        .attr "version","1.1"
+        .attr "baseProfile","full"
+        .attr "xmlns","http://www.w3.org/2000/svg"
 
       mouseCatcher = svg.append "rect"
         .classed "mouse-catcher", true
@@ -234,6 +237,7 @@ class Visualiztation extends React.Component
       #{top:wt,left:wl,bottom:wb,right:wr}= @props.window
       #debugPoint canvas, [[wl,wt],[wr,wb]], "window"
       #debugPoint canvas, selection, "selection"
+      @props.magicHook?()
   @defaultProps:
     mode:"edit"
     # these are world coordinates, but not necessarily integers.

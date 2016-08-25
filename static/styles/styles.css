@@ -222,11 +222,27 @@
   font-weight: bold;
 }
 
-.svgs div span{
+.svgs div.meta span{
   clear:both;
   float:left;
 }
-
-.svgs div {
+.svgs div.meta {
+  height:150px;
+  width:70%;
+  position:absolute;
+  top:0px;
+  left:0px;
+}
+.svgs div.d3wrapper {
+  width:150px;
+  height150px;
+  position:absolute;
+  bottom:0px;
+  right:150px;
+}
+.svgs div.slot {
+  height: 150px;
+  width:100%;
   border: 1px black solid;
+  position: relative;
 }
