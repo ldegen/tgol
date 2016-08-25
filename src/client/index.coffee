@@ -3,6 +3,7 @@ Editor = require "./editor"
 Arena = require "./arena"
 App = require "./app"
 Leaderboard = require "./leaderboard"
+Svgs = require "./svgs"
 PatternDetail = require "./pattern-detail"
 ready = require "document-ready"
 {Router, Route, browserHistory} = require "react-router"
@@ -27,6 +28,9 @@ ready ->
     ,
       path:"kiosk/leaderboard"
       component: Leaderboard
+    ,
+      path:"kiosk/svgs"
+      component: Svgs
     ]
   ]
   render(

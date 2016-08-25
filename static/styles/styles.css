@@ -221,3 +221,12 @@
   line-height: 1.17;
   font-weight: bold;
 }
+
+.svgs div span{
+  clear:both;
+  float:left;
+}
+
+.svgs div {
+  border: 1px black solid;
+}

@@ -30,7 +30,7 @@ module.exports = class Arena extends React.Component
   _key: (board)->
     box = board.bbox()
     return "" if not box?
-    {left, top} = board.bbox()
+    {left, top} = box
     board.livingCells()
       .map ([x,y,z])->[x-left, y-top,z]
       .sort ([ax,ay],[bx,b_y])->
