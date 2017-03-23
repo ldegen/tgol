@@ -36,6 +36,20 @@ Board = (spec)->
       spawn x,y,z
     this
 
+  cycle = (x, y, max=1)->
+    i = indexOf(x,y) 
+    if i?
+      z = _livingCells[i][2]
+      if z>= max
+        kill i
+      else
+        _livingCells[i][2] = z+1
+    else
+      _livingCells.push [x,y,0]
+      _bbox=null
+    this
+
+    
   paste = (pattern, z)->
     for [x,y] in pattern.cells
       i = indexOf x,y
@@ -114,6 +128,7 @@ Board = (spec)->
   bbox:bbox
   alive:alive
   toggle:toggle
+  cycle:cycle
   asciiArt: (extent)->
     AsciiArt.render _livingCells, extent:extent
   next:next
